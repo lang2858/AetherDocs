@@ -156,7 +156,7 @@ ZStack {
 
 ## ScrollView
 
-可滚动容器，支持垂直和水平方向滚动。
+可滚动容器，支持垂直和水平方向滚动。编译器会自动为 ScrollView 内的直接子视图添加 `.frame(maxWidth: .infinity, alignment: .leading)`，确保内容左对齐并填满宽度（如果子视图已设置 `.w()` 或 `.frame(width:)` 则不会重复添加）。
 
 ### 属性
 
