@@ -67,14 +67,30 @@ aether build --project myapp --platform macos
 aether build --project myapp --platform macos --release
 ```
 
-构建过程会自动完成 Rust 编译、UniFFI 绑定生成、SwiftUI 代码生成和 Xcode 编译。详见 [构建流水线](/guide/build-pipeline)。
+构建过程会自动完成 Rust 编译、UniFFI 绑定生成、SwiftUI 代码生成和 Xcode 编译。构建完成后会打印 `.app` 产物路径。详见 [构建流水线](/guide/build-pipeline)。
+
+## 转译项目（仅生成代码，不编译）
+
+如果只需要生成 UniFFI crate 和 SwiftUI 代码，不执行编译：
+
+```bash
+aether trans --project myapp
+```
+
+输出目录默认为项目下的 `gen/swiftui/`。
 
 ## 运行应用
 
-构建成功后，`.app` 产物位于构建输出目录中。macOS 平台可以直接双击运行，或通过命令行启动：
+构建成功后，CLI 会打印 `.app` 产物的具体路径。macOS 平台可以直接运行：
 
 ```bash
 open gen/macos/DerivedData/Build/Products/Debug/MyappApp.app
+```
+
+也可以用 Xcode 打开生成的项目进行调试：
+
+```bash
+open gen/macos/MyappApp.xcodeproj
 ```
 
 ## 支持的平台
@@ -128,4 +144,17 @@ aether build [--project <dir>] [--platform <platform>] [--release]
 | `--platform <platform>` | 目标平台，默认为 `macos` |
 | `--release` | Release 构建模式（默认为 debug） |
 
-可用的 platform 值：`macos`、`iphone`、`ipad`、`android`、`android-pad`、`windows`、`linux`、`harmony`、`harmony-pad`、`web`
+可用的 platform 值：`macos`、`iphone`、`ipad`
+
+### aether trans
+
+转译 Aether 项目，生成 UniFFI crate 和 SwiftUI 代码（不执行编译）。
+
+```bash
+aether trans [--project <dir>] [--build-dir <dir>]
+```
+
+| 参数 | 说明 |
+|------|------|
+| `--project <dir>` | 项目路径，默认为当前目录 `.` |
+| `--build-dir <dir>` | 构建输出路径，默认为项目下的 `gen` |

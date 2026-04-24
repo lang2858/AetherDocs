@@ -102,7 +102,7 @@ aether.toml + .ae + .rs + themes + i18n + assets
 | iPhone | `platform=iOS Simulator,name=iPhone 14` |
 | iPad | `platform=iOS Simulator,name=iPad (10th generation)` |
 
-构建成功后，`.app` 产物位于 `DerivedData/Build/Products/` 目录中。
+构建成功后，`.app` 产物位于 `gen/<platform>/DerivedData/Build/Products/Debug/` 目录中。CLI 会在构建完成后打印产物路径和运行命令。
 
 ## 未来后端
 
