@@ -12,7 +12,9 @@ AE 修饰符以点语法链式调用，映射为 SwiftUI 的 View Modifier。本
 | `.pad(top=T bottom=B left=L right=R)` | `.padding(EdgeInsets(top: T, leading: L, bottom: B, trailing: R))` | `.pad(left=8, right=8, top=4, bottom=4)` |
 | `.mar(N)` | `.padding(N)` (外层加负值或 Spacer) | `.mar(16)` |
 | `.w(N)` | `.frame(width: N)` | `.w(200)` |
+| `.w(infinity)` | `.frame(maxWidth: .infinity)` | `.w(infinity)` |
 | `.h(N)` | `.frame(height: N)` | `.h(48)` |
+| `.h(infinity)` | `.frame(maxHeight: .infinity)` | `.h(infinity)` |
 | `.flexGrow(1)` | `.frame(maxWidth: .infinity)` | `.flexGrow(1)` |
 
 ### 内边距示例
