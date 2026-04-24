@@ -54,7 +54,7 @@ export default defineConfig({
       provider: 'local',
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/aether-framework/aether' },
+      { icon: 'github', link: 'https://github.com/lang2858/AetherDocs' },
     ],
   },
 })
