@@ -73,6 +73,9 @@ color = "$colors.primary"
 font = "$typography.body"
 padding = "$spacing.medium"
 cornerRadius = "$radius.small"
+
+[styles.Divider]
+color = "$colors.divider"
 ```
 
 ### 各节说明
