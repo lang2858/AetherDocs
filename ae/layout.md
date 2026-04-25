@@ -340,33 +340,39 @@ HStack {
 
 支持任意子组件，常用：`Icon`、`Text`、`Spacer`。
 
+Toolbar 内的顶层子元素会自动分配到不同的 `ToolbarItem` 位置：
+- **单个顶层元素**：分配 `placement: .cancellationAction`（靠左，占据可用宽度）
+- **多个顶层元素**：第一个 `placement: .cancellationAction`（左），中间的 `placement: .principal`（居中），最后一个 `placement: .confirmationAction`（右）
+
 ### 示例
 
-**AE 语法：**
+**AE 语法（单区域）：**
 
 ```ae
 VStack(spacing=12) {
     Text("内容")
 }
 Toolbar {
-    Icon(name="sidebar.left" size=16 color="#8A90A2")
-        .onTap({Home.toggle_sidebar()})
-    Spacer()
-    Text("标题" size=14 weight="semibold")
-    Spacer()
-    Icon(name="gearshape" size=16 color="#8A90A2")
-        .onTap({Home.open_settings()})
+    HStack(spacing=12) {
+        Icon(name="sidebar.left" size=16 color="#8A90A2")
+            .onTap({Home.toggle_sidebar()})
+        Spacer()
+        Text("标题" size=14 weight="semibold")
+        Spacer()
+        Icon(name="gearshape" size=16 color="#8A90A2")
+            .onTap({Home.open_settings()})
+    }
 }
 ```
 
-**SwiftUI 输出：**
+**SwiftUI 输出（单区域）：**
 
 ```swift
 VStack(spacing: 12) {
     Text("内容")
 }
 .toolbar {
-    ToolbarItemGroup(placement: .principal) {
+    ToolbarItem(placement: .cancellationAction) {
         HStack(spacing: 12) {
             Button(action: { viewModel.toggleSidebar() }) {
                 Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
@@ -377,6 +383,44 @@ VStack(spacing: 12) {
             Button(action: { viewModel.openSettings() }) {
                 Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
             }
+        }
+    }
+}
+```
+
+**AE 语法（多区域 — 左/中/右）：**
+
+```ae
+VStack(spacing=12) {
+    Text("内容")
+}
+Toolbar {
+    Icon(name="sidebar.left" size=16 color="#8A90A2")
+        .onTap({Home.toggle_sidebar()})
+    Text("标题" size=14 weight="semibold")
+    Icon(name="gearshape" size=16 color="#8A90A2")
+        .onTap({Home.open_settings()})
+}
+```
+
+**SwiftUI 输出（多区域）：**
+
+```swift
+VStack(spacing: 12) {
+    Text("内容")
+}
+.toolbar {
+    ToolbarItem(placement: .cancellationAction) {
+        Button(action: { viewModel.toggleSidebar() }) {
+            Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
+        }
+    }
+    ToolbarItem(placement: .principal) {
+        Text("标题").font(.system(size: 14, weight: .semibold))
+    }
+    ToolbarItem(placement: .confirmationAction) {
+        Button(action: { viewModel.openSettings() }) {
+            Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
         }
     }
 }
