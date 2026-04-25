@@ -326,7 +326,9 @@ HStack {
 
 ## Toolbar
 
-工具栏组件，用于在 macOS 标题栏区域放置自定义按钮和内容。通常配合 `titlebar_style = "hidden"` 使用。
+工具栏组件，用于在导航栏区域放置自定义按钮和内容。通常配合 `titlebar_style = "hidden"` 使用。
+
+Toolbar 内部使用 `ToolbarItem` 和 `ToolbarItemGroup` 显式声明每个工具栏项的位置，与 SwiftUI 的 API 一致。
 
 ### 属性
 
@@ -338,79 +340,76 @@ HStack {
 
 ### 子组件
 
-支持任意子组件，常用：`Icon`、`Text`、`Spacer`。
+支持 `ToolbarItem` 和 `ToolbarItemGroup`。
 
-Toolbar 内的顶层子元素会自动分配到不同的 `ToolbarItem` 位置：
-- **单个顶层元素**：分配 `placement: .cancellationAction`（靠左，占据可用宽度）
-- **多个顶层元素**：第一个 `placement: .cancellationAction`（左），中间的 `placement: .principal`（居中），最后一个 `placement: .confirmationAction`（右）
+---
+
+## ToolbarItem
+
+工具栏单项，放在 `Toolbar` 内部，显式指定放置位置。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| placement | enum | automatic | 放置位置（见下方 placement 映射表） |
+
+### placement 映射
+
+| AE 值 | SwiftUI 值 | 说明 |
+|--------|-----------|------|
+| automatic | automatic | 自动选择位置 |
+| principal | principal | 导航栏居中（标题区域） |
+| leading | navigationBarLeading | 导航栏左侧 |
+| trailing | navigationBarTrailing | 导航栏右侧 |
+| topLeading | topBarLeading | 顶部栏左侧 |
+| topTrailing | topBarTrailing | 顶部栏右侧 |
+| bottomBar | bottomBar | 底部栏 |
+| cancellationAction | cancellationAction | 取消操作位置 |
+| confirmationAction | confirmationAction | 确认操作位置 |
+| destructiveAction | destructiveAction | 破坏性操作位置 |
+| primaryAction | primaryAction | 主要操作位置 |
+| status | status | 状态区域 |
+
+### 事件
+
+无。
+
+### 子组件
+
+支持任意子组件，常用：`Icon`、`Text`、`HStack`。
 
 ### 示例
 
-**AE 语法（单区域）：**
+**AE 语法：**
 
 ```ae
 VStack(spacing=12) {
     Text("内容")
 }
 Toolbar {
-    HStack(spacing=12) {
+    ToolbarItem(placement=leading) {
         Icon(name="sidebar.left" size=16 color="#8A90A2")
             .onTap({Home.toggle_sidebar()})
-        Spacer()
+    }
+    ToolbarItem(placement=principal) {
         Text("标题" size=14 weight="semibold")
-        Spacer()
+    }
+    ToolbarItem(placement=trailing) {
         Icon(name="gearshape" size=16 color="#8A90A2")
             .onTap({Home.open_settings()})
     }
 }
 ```
 
-**SwiftUI 输出（单区域）：**
+**SwiftUI 输出：**
 
 ```swift
 VStack(spacing: 12) {
     Text("内容")
 }
 .toolbar {
-    ToolbarItem(placement: .cancellationAction) {
-        HStack(spacing: 12) {
-            Button(action: { viewModel.toggleSidebar() }) {
-                Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
-            }
-            Spacer()
-            Text("标题").font(.system(size: 14, weight: .semibold))
-            Spacer()
-            Button(action: { viewModel.openSettings() }) {
-                Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
-            }
-        }
-    }
-}
-```
-
-**AE 语法（多区域 — 左/中/右）：**
-
-```ae
-VStack(spacing=12) {
-    Text("内容")
-}
-Toolbar {
-    Icon(name="sidebar.left" size=16 color="#8A90A2")
-        .onTap({Home.toggle_sidebar()})
-    Text("标题" size=14 weight="semibold")
-    Icon(name="gearshape" size=16 color="#8A90A2")
-        .onTap({Home.open_settings()})
-}
-```
-
-**SwiftUI 输出（多区域）：**
-
-```swift
-VStack(spacing: 12) {
-    Text("内容")
-}
-.toolbar {
-    ToolbarItem(placement: .cancellationAction) {
+    ToolbarItem(placement: .navigationBarLeading) {
         Button(action: { viewModel.toggleSidebar() }) {
             Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
         }
@@ -418,10 +417,43 @@ VStack(spacing: 12) {
     ToolbarItem(placement: .principal) {
         Text("标题").font(.system(size: 14, weight: .semibold))
     }
-    ToolbarItem(placement: .confirmationAction) {
+    ToolbarItem(placement: .navigationBarTrailing) {
         Button(action: { viewModel.openSettings() }) {
             Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
         }
+    }
+}
+```
+
+---
+
+## ToolbarItemGroup
+
+工具栏项分组，将多个子项放在同一个 placement 位置。当同一位置需要放置多个元素时使用。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| placement | enum | automatic | 放置位置（同 ToolbarItem 的 placement 映射表） |
+
+### 事件
+
+无。
+
+### 子组件
+
+支持任意子组件。
+
+### 示例
+
+```ae
+Toolbar {
+    ToolbarItemGroup(placement=trailing) {
+        Icon(name="plus" size=16 color="#8A90A2")
+            .onTap({Home.add_item()})
+        Icon(name="gearshape" size=16 color="#8A90A2")
+            .onTap({Home.open_settings()})
     }
 }
 ```
