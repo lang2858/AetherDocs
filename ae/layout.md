@@ -366,15 +366,17 @@ VStack(spacing: 12) {
     Text("内容")
 }
 .toolbar {
-    HStack(spacing: 12) {
-        Button(action: { viewModel.toggleSidebar() }) {
-            Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
-        }
-        Spacer()
-        Text("标题").font(.system(size: 14, weight: .semibold))
-        Spacer()
-        Button(action: { viewModel.openSettings() }) {
-            Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
+    ToolbarItemGroup(placement: .principal) {
+        HStack(spacing: 12) {
+            Button(action: { viewModel.toggleSidebar() }) {
+                Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
+            }
+            Spacer()
+            Text("标题").font(.system(size: 14, weight: .semibold))
+            Spacer()
+            Button(action: { viewModel.openSettings() }) {
+                Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
+            }
         }
     }
 }
