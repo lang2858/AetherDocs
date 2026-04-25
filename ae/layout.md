@@ -14,6 +14,7 @@ AE 布局组件用于组织页面的空间结构。所有布局组件均支持 `
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的垂直间距 |
 | align | enum | center | 水平对齐方式：`start`（左对齐）/ `center`（居中）/ `end`（右对齐） |
+| justify | enum | start | 主轴排列方式：`start`（靠顶）/ `center`（居中）/ `end`（靠底） |
 
 ### 事件
 
@@ -65,6 +66,7 @@ VStack(alignment: .leading, spacing: 12) {
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的水平间距 |
 | align | enum | center | 垂直对齐方式：`top`（顶部对齐）/ `center`（居中）/ `bottom`（底部对齐） |
+| justify | enum | start | 主轴排列方式：`start`（靠左）/ `center`（居中）/ `end`（靠右） |
 
 ### 事件
 
@@ -107,6 +109,33 @@ HStack(alignment: .center, spacing: 8) {
 }
 .padding(12)
 ```
+
+**justify 示例：**
+
+```ae
+HStack(spacing=10 justify="end") {
+    Text("Build Succeeded")
+    Icon(name="magnifyingglass")
+    Icon(name="gearshape")
+}
+```
+
+```swift
+HStack(spacing: 10) {
+    Spacer()
+    Text("Build Succeeded")
+    Image(systemName: "magnifyingglass")
+    Image(systemName: "gearshape")
+}
+```
+
+justify 通过在子元素前后插入 `Spacer()` 实现主轴排列：
+
+| justify 值 | 生成逻辑 |
+|-----------|---------|
+| start | 不插入（默认行为） |
+| center | 子元素前插 Spacer()，后插 Spacer() |
+| end | 子元素前插 Spacer() |
 
 ---
 
