@@ -15,6 +15,7 @@ identifier = "com.example.myapp"
 width = 800
 height = 600
 resizable = true
+titlebar_style = "default"
 
 [platform.macos]
 enabled = true
@@ -94,6 +95,15 @@ initial_route = "home"
 | `width` | u32 | `800` | 窗口默认宽度（像素） |
 | `height` | u32 | `600` | 窗口默认高度（像素） |
 | `resizable` | bool | `true` | 窗口是否可调整大小 |
+| `titlebar_style` | string | `"default"` | 标题栏样式，仅 macOS 生效。详见下方说明 |
+
+#### window.titlebar_style 可选值
+
+| 值 | 说明 |
+|----|------|
+| `default` | 标准标题栏，显示窗口标题和红绿灯按钮 |
+| `hidden` | 隐藏标题栏，保留红绿灯按钮，内容延伸到标题栏区域。通常配合 `Toolbar` 组件使用，编译器会自动添加顶部留白以避免内容与红绿灯按钮重叠 |
+| `inline` | macOS 13+ 内联标题栏，标题融入工具栏区域，适合工具类应用 |
 
 ### [platform.\*]
 
@@ -191,6 +201,7 @@ initial_route = "home"
 | `[window]` | `width` | `800` |
 | `[window]` | `height` | `600` |
 | `[window]` | `resizable` | `true` |
+| `[window]` | `titlebar_style` | `"default"` |
 | `[platform.macos]` | `enabled` | `true` |
 | `[platform.macos]` | `min_version` | `"12.0"` |
 | `[platform.iphone]` | `enabled` | `true` |
