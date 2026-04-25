@@ -191,6 +191,8 @@ Image($assets.tab.home).w(24).h(24)
 Button($assets.icon_add "新建" onClick={Home.create()})
 ```
 
+> 💡 当需要复用一段 UI 时，可以使用[自定义组件](/components/custom-components)，用 `:` 前缀调用。
+
 ---
 
 ## 国际化引用

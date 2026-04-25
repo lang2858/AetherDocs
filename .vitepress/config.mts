@@ -10,6 +10,7 @@ export default defineConfig({
     nav: [
       { text: '指南', link: '/guide/getting-started' },
       { text: 'AE 组件', link: '/ae/syntax' },
+      { text: '自定义组件', link: '/components/custom-components' },
       { text: 'Logic 层', link: '/logic/overview' },
       { text: '主题 & i18n', link: '/theming/theme' },
     ],
@@ -33,8 +34,6 @@ export default defineConfig({
         { text: '媒体组件', link: '/ae/media' },
         { text: '控制流', link: '/ae/control-flow' },
         { text: '修饰符全表', link: '/ae/modifiers' },
-      ],
-      '/components/': [
         { text: '自定义组件', link: '/components/custom-components' },
       ],
       '/logic/': [
