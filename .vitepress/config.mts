@@ -44,8 +44,6 @@ export default defineConfig({
       '/theming/': [
         { text: '主题系统', link: '/theming/theme' },
         { text: '国际化', link: '/theming/i18n' },
-      ],
-      '/assets/': [
         { text: '资源管理', link: '/assets/assets' },
       ],
     },
