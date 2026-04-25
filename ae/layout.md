@@ -324,6 +324,64 @@ HStack {
 
 ---
 
+## Toolbar
+
+工具栏组件，用于在 macOS 标题栏区域放置自定义按钮和内容。通常配合 `titlebar_style = "hidden"` 使用。
+
+### 属性
+
+无专用属性。
+
+### 事件
+
+无。
+
+### 子组件
+
+支持任意子组件，常用：`Icon`、`Text`、`Spacer`。
+
+### 示例
+
+**AE 语法：**
+
+```ae
+VStack(spacing=12) {
+    Text("内容")
+}
+Toolbar {
+    Icon(name="sidebar.left" size=16 color="#8A90A2")
+        .onTap({Home.toggle_sidebar()})
+    Spacer()
+    Text("标题" size=14 weight="semibold")
+    Spacer()
+    Icon(name="gearshape" size=16 color="#8A90A2")
+        .onTap({Home.open_settings()})
+}
+```
+
+**SwiftUI 输出：**
+
+```swift
+VStack(spacing: 12) {
+    Text("内容")
+}
+.toolbar {
+    HStack(spacing: 12) {
+        Button(action: { viewModel.toggleSidebar() }) {
+            Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
+        }
+        Spacer()
+        Text("标题").font(.system(size: 14, weight: .semibold))
+        Spacer()
+        Button(action: { viewModel.openSettings() }) {
+            Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
+        }
+    }
+}
+```
+
+---
+
 ## Divider
 
 分割线组件，用于在内容之间添加视觉分隔。
