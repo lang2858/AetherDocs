@@ -1,5 +1,42 @@
 # 快速开始
 
+## 环境要求
+
+在开始之前，请确保你的开发环境满足以下要求：
+
+### 通用依赖
+
+| 工具 | 最低版本 | 安装方式 | 验证命令 |
+|------|---------|---------|---------|
+| Rust | 1.70+ | [rustup.rs](https://rustup.rs) | `rustc --version` |
+| Cargo | 随 Rust 安装 | 同上 | `cargo --version` |
+
+### Apple 平台（macOS / iPhone / iPad）
+
+| 工具 | 最低版本 | 安装方式 | 验证命令 |
+|------|---------|---------|---------|
+| Xcode | 14.0+ | Mac App Store | `xcodebuild -version` |
+| Xcode Command Line Tools | — | `xcode-select --install` | `xcode-select -p` |
+
+> **为什么用 Xcode 而不是 Swift Package Manager？**
+>
+> Aether 使用 Xcode 原生项目（`.xcodeproj`）构建，而非 SPM（`swift build`）。原因：
+>
+> 1. **资源打包**：Xcode 项目通过 `Bundle.main` 访问 Assets Catalog 和其他资源，SPM 的 `.module` bundle 在原生 app target 中不可用。
+> 2. **单 target 架构**：Aether 将所有 Swift 源文件（UniFFI 绑定、资源管理、SwiftUI 视图）放在同一个 Xcode target 中，无需跨模块 import，避免了 SPM 模块边界的复杂性。
+> 3. **完整构建能力**：`xcodebuild` 支持 signing、entitlements、Info.plist、Assets Catalog 等 iOS/macOS 应用打包所需的全部功能，SPM 仅适合库开发。
+> 4. **调试支持**：Xcode 原生项目可直接用 Xcode IDE 打开调试，断点、性能分析等工具开箱即用。
+
+### Android 平台（未来支持）
+
+需要 Android SDK 和 JDK，具体要求待定。
+
+### 其他平台（未来支持）
+
+Windows / Linux / HarmonyOS / Web 的环境要求待定。
+
+---
+
 ## 安装 Aether CLI
 
 从源码编译安装 Aether CLI：
