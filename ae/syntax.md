@@ -168,19 +168,24 @@ VStack(spacing=$spacing.md) {
 
 ## 资源引用
 
-使用 `$assets` 引用项目资源：
+使用 `$assets` 引用 `src/assets/` 下的 SVG 资源。引用路径与目录结构对应，用 `.` 代替 `/`：
+
+| 目录结构 | AE 引用 | 生成 Swift |
+|---------|---------|-----------|
+| `src/assets/logo.svg` | `$assets.logo` | `AppAssets.logo` |
+| `src/assets/tab/home.svg` | `$assets.tab.home` | `AppAssets.tab_home` |
 
 | 引用方式 | 说明 | 示例 |
 |---------|------|------|
-| `$assets.xxx` | 静态资源引用 | `$assets.logo`、`$assets.banner` |
-| `$assets.{param}` | 动态资源引用 | `$assets.{icon}` |
+| `$assets.xxx` | 静态资源引用 | `$assets.logo`、`$assets.tab.home` |
+| `$assets.{param}` | 动态资源引用（暂不支持） | `$assets.{icon}` |
 
 ```ae
 // 静态资源
 Image($assets.logo).w(32).h(32)
 
-// 动态资源（根据运行时变量决定）
-Image($assets.{icon}).w(24).h(24)
+// 子目录资源：src/assets/tab/home.svg
+Image($assets.tab.home).w(24).h(24)
 
 // 按钮图标
 Button($assets.icon_add "新建" onClick={Home.create()})
