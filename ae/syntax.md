@@ -178,7 +178,7 @@ VStack(spacing=$spacing.md) {
 | 引用方式 | 说明 | 示例 |
 |---------|------|------|
 | `$assets.xxx` | 静态资源引用 | `$assets.logo`、`$assets.tab.home` |
-| `$assets.{param}` | 动态资源引用（暂不支持） | `$assets.{icon}` |
+| `$assets.{param}` | 动态资源引用 | `$assets.{icon}` |
 
 ```ae
 // 静态资源

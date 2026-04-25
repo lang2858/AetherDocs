@@ -22,22 +22,23 @@ src/assets/
 
 ## 命名规则
 
-构建系统将文件路径转换为 Swift 标识符，规则如下：
+在 AE 模板中，使用点号 `.` 表示目录层级。编译器会将路径转换为 Swift 标识符：
 
 | 规则 | 说明 |
 |---|---|
-| 目录分隔符 `.` | 转换为下划线 `_` |
+| 目录层级分隔符 | 使用点号 `.`（如 `$assets.icons.home`） |
+| 标识符转换 | 点号 `.` 在底层 Swift 代码中转换为下划线 `_` |
 | 文件扩展名 | 去除 `.svg` 后缀 |
 
 ### 转换示例
 
-| 文件路径 | 生成的标识符 |
-|---|---|
-| `src/assets/logo.svg` | `AppAssets.logo` |
-| `src/assets/icons/home.svg` | `AppAssets.icons_home` |
-| `src/assets/icons/arrow_right.svg` | `AppAssets.icons_arrow_right` |
-| `src/assets/tabs/discover.svg` | `AppAssets.tabs_discover` |
-| `src/assets/illustrations/empty_state.svg` | `AppAssets.illustrations_empty_state` |
+| 文件路径 | AE 引用 | 生成 Swift |
+|---|---|---|
+| `src/assets/logo.svg` | `$assets.logo` | `AppAssets.logo` |
+| `src/assets/icons/home.svg` | `$assets.icons.home` | `AppAssets.icons_home` |
+| `src/assets/icons/arrow_right.svg` | `$assets.icons.arrow_right` | `AppAssets.icons_arrow_right` |
+| `src/assets/tabs/discover.svg` | `$assets.tabs.discover` | `AppAssets.tabs_discover` |
+| `src/assets/illustrations/empty_state.svg` | `$assets.illustrations.empty_state` | `AppAssets.illustrations_empty_state` |
 
 ## AE 模板中的引用
 
@@ -45,7 +46,7 @@ src/assets/
 
 ```ae
 Image($assets.logo)
-Image($assets.icons_home)
+Image($assets.icons.home)
 ```
 
 生成 Swift：
@@ -59,12 +60,12 @@ Image("icons_home")    // 来自 Assets.xcassets
 
 ```ae
 HStack {
-    Image($assets.icons_home)
+    Image($assets.icons.home)
     Text("首页" font=$typography.body)
 }
 
 Button("设置" onClick={Settings.open()}) {
-    Image($assets.icons_settings)
+    Image($assets.icons.settings)
 }
 ```
 
@@ -85,13 +86,13 @@ component IconBtn(icon: String) {
 例如使用时：
 
 ```ae
-IconBtn(icon="icons_home")
+IconBtn(icon="icons.home")
 ```
 
 展开为：
 
 ```ae
-Image($assets.icons_home)
+Image($assets.icons.home)
 ```
 
 最终生成 Swift：
