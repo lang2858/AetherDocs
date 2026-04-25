@@ -110,20 +110,33 @@ component(icon, label, onClick, color="$colors.primary") {
 
 ## 调用组件
 
-使用组件名加属性的方式调用，传入的参数覆盖默认值：
+使用 `:` 前缀加组件名的方式调用自定义组件，传入的参数覆盖默认值：
 
 ```ae
-ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
+:ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
+```
+
+`:` 前缀明确标识这是自定义组件调用，与内置布局控件（如 `VStack`、`Toolbar`）区分。内置控件不带前缀直接使用：
+
+```ae
+VStack(spacing=8) {           // 内置布局控件
+    :ActionButton(...)         // 自定义组件
+}
+Toolbar {                      // 内置 Toolbar 布局控件
+    Icon(...)
+    Spacer()
+}
+:Toolbar(icon="star")          // 自定义 Toolbar 组件（与内置同名）
 ```
 
 未传入的可选参数使用定义时的默认值：
 
 ```ae
 // color 使用默认值 "$colors.text"，width 使用默认值 220
-ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
+:ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
 
 // 覆盖 color 和 width
-ActionButton(icon="trash" label="Delete" onClick={Home.on_delete()} color="$colors.error" width=180)
+:ActionButton(icon="trash" label="Delete" onClick={Home.on_delete()} color="$colors.error" width=180)
 ```
 
 ---
@@ -135,7 +148,7 @@ ActionButton(icon="trash" label="Delete" onClick={Home.on_delete()} color="$colo
 ### 展开过程
 
 ```
-1. 解析调用 → ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
+1. 解析调用 → :ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
 2. 查找定义 → component ActionButton(icon, label, onClick, color="$colors.text", width=220) { ... }
 3. 参数绑定 → icon="plus", label="Create", onClick={Home.on_create()}, color="$colors.text", width=220
 4. 替换引用 → {icon} → "plus", {label} → "Create", {onClick} → Home.on_create(), {color} → "$colors.text", {width} → 220
@@ -224,19 +237,22 @@ HStack(spacing: 8) {
 
 ---
 
-## 内置组件排除列表
+## 自定义组件与内置控件
 
-以下名称是 Aether 内置组件，**不会**被识别为自定义组件：
+自定义组件调用使用 `:` 前缀，内置布局控件不带前缀。两者同名时不会冲突：
 
-| 内置组件 | | | | |
-|---------|---|---|---|---|
-| VStack | HStack | ZStack | Text | Button |
-| Image | Icon | Rectangle | Select | Spacer |
-| Divider | Grid | GridCell | ScrollView | Tab |
-| Tabs | Stack | Routes | Drawer | Toast |
-| Dialog | FileTree | | | |
+```ae
+Toolbar {             // 内置 Toolbar 布局控件（生成 .toolbar { ToolbarItemGroup { ... } })
+    Icon(...)
+}
 
-如果 `src/ui/components/` 目录下存在与内置组件同名的文件（如 `text.ae`），该文件将被忽略，内置组件优先。
+:Toolbar(icon="star") // 自定义组件（来自 src/ui/components/toolbar.ae）
+```
+
+| 类型 | 语法 | 示例 |
+|------|------|------|
+| 内置布局控件 | 名称直接使用 | `VStack { ... }`、`Toolbar { ... }` |
+| 自定义组件 | `:` 前缀 | `:ActionButton(icon="plus")`、`:Toolbar(icon="star")` |
 
 ---
 
