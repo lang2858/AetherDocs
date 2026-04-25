@@ -12,14 +12,15 @@ aether.toml + .ae + .rs + themes + i18n + assets
 │  1.  加载配置 — 解析 aether.toml             │
 │  2.  提取 Rust 模块 — 解析所有 .rs 文件      │
 │  3.  验证绑定 — 检查 onClick 引用是否有效     │
-│  4.  生成 UniFFI crate                       │
-│  5.  cargo build — 编译 Rust 到动态库        │
-│  6.  生成 UniFFI Swift 绑定                  │
-│  7.  加载 themes / i18n / assets             │
-│  8.  生成资源 Swift 文件                     │
-│  9.  生成 Xcode 项目                         │
-│  10. 生成 SwiftUI 视图文件                   │
-│  11. xcodebuild — 最终原生编译               │
+│  4.  能力检测 — 扫描 .ae/.rs 确定需要的能力  │
+│  5.  生成 UniFFI crate（按能力过滤）         │
+│  6.  cargo build — 编译 Rust 到动态库        │
+│  7.  生成 UniFFI Swift 绑定                  │
+│  8.  加载 themes / i18n / assets             │
+│  9.  生成资源 Swift 文件（按能力过滤）       │
+│  10. 生成 Xcode 项目                         │
+│  11. 生成 SwiftUI 视图文件                   │
+│  12. xcodebuild — 最终原生编译               │
 └─────────────────────────────────────────────┘
         │
         ▼
@@ -40,7 +41,18 @@ aether.toml + .ae + .rs + themes + i18n + assets
 
 检查 `.ae` 文件中的所有绑定引用（如 `onClick={Home.on_click()}`），确认引用的模块名和方法名在对应的 `.rs` 文件中确实存在。如果验证失败，构建将中止并报告所有错误。
 
-### 4. 生成 UniFFI crate
+### 4. 能力检测
+
+扫描项目源文件，自动检测需要的能力（Capability）：
+
+1. **AE 扫描** — 遍历 `src/ui/**/*.ae`，匹配组件名（如 `Map(`、`WebView(`、`TextField(`）→ 对应能力
+2. **Rust 扫描** — 遍历 `src/logic/**/*.rs`，匹配 `sys_*` 函数前缀（如 `sys_storage_`、`sys_location_`）→ 对应能力
+3. **合并** — 合并 AE 和 Rust 扫描结果，始终包含核心能力（SystemUI、Navigation、Theme、I18n）
+4. **配置覆盖** — 应用 `aether.toml` 中 `[capabilities]` 的 `force_include` / `force_exclude`
+
+检测结果决定后续步骤的条件生成行为：仅项目实际使用的 delegate、API 段落和框架导入才会被生成。对于简单项目（仅 VStack/Text/Button），Platform.swift 从 ~1900 行缩减到 ~400 行，lib.rs 从 ~1600 行缩减到 ~500 行。能力列表详见 [配置参考 → capabilities](/guide/config#capabilities)。
+
+### 5. 生成 UniFFI crate（按能力过滤）
 
 根据提取的 Rust 模块信息，在构建输出目录生成一个完整的 UniFFI crate，包含：
 
@@ -48,15 +60,15 @@ aether.toml + .ae + .rs + themes + i18n + assets
 - `build.rs` — 构建脚本
 - `src/lib.rs` — 带 `#[uniffi::export]` 属性的库文件，将所有 Rust 结构体和方法暴露给原生平台
 
-### 5. cargo build
+### 6. cargo build
 
 在生成的 UniFFI crate 目录下执行 `cargo build`，编译 Rust 代码为动态链接库 `lib<name>.dylib`。使用 `--release` 参数可进行优化构建。
 
-### 6. 生成 UniFFI Swift 绑定
+### 7. 生成 UniFFI Swift 绑定
 
 使用 `uniffi-bindgen` 工具，从编译好的动态库生成 Swift 语言绑定代码，使 Swift/SwiftUI 可以直接调用 Rust 逻辑。
 
-### 7. 加载 themes / i18n / assets
+### 8. 加载 themes / i18n / assets
 
 加载项目资源文件：
 
@@ -64,7 +76,7 @@ aether.toml + .ae + .rs + themes + i18n + assets
 - `src/i18n/` — 所有语言翻译（`.toml`）
 - `src/assets/` — 所有 SVG 图标资源
 
-### 8. 生成资源 Swift 文件
+### 9. 生成资源 Swift 文件（按能力过滤）
 
 基于加载的资源，生成一系列 Swift 管理类，包括：
 
@@ -79,15 +91,15 @@ aether.toml + .ae + .rs + themes + i18n + assets
 | `Device.swift` | 设备信息 |
 | `Platform.swift` | 平台检测 |
 
-### 9. 生成 Xcode 项目
+### 10. 生成 Xcode 项目
 
 在构建输出目录生成 `.xcodeproj` 项目文件（含 `.pbxproj`、`project.yml`、scheme 等），将 UniFFI 绑定、资源 Swift 文件、SwiftUI 视图文件等组织到一个完整的 Xcode 项目中。所有源文件位于同一个 target 内，无需跨模块 `import`。
 
-### 10. 生成 SwiftUI 视图文件
+### 11. 生成 SwiftUI 视图文件
 
 将每个 `.ae` 文件转换为对应的 SwiftUI 视图文件（`.swift`）。一个 `.ae` 文件生成一个 `.swift` 文件，组件 `.ae` 文件生成可复用的 SwiftUI 组件。
 
-### 11. xcodebuild
+### 12. xcodebuild
 
 最终步骤，调用 `xcodebuild` 编译完整的原生应用。不同平台使用不同的目标：
 

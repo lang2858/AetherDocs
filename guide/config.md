@@ -55,10 +55,9 @@ min_version = "3.0"
 [platform.web]
 enabled = false
 
-[permissions]
-camera = false
-location = false
-network = true
+[capabilities]
+force_include = []
+force_exclude = []
 
 [theme]
 default = "light"
@@ -144,15 +143,47 @@ initial_route = "home"
 | `harmony-pad` | `false` | `"3.0"` |
 | `web` | `false` | — |
 
-### [permissions]
+### [capabilities]
 
-声明应用需要的系统权限，用于生成平台对应的权限描述（如 iOS 的 Info.plist 条目）。
+控制按需代码生成。Aether 会自动扫描 `.ae` 文件（组件使用）和 `.rs` 文件（`sys_*` 函数调用）来检测项目需要的能力，仅生成必要的 delegate、Platform.swift 段落和框架导入。
+
+```toml
+[capabilities]
+force_include = ["Location"]   # 强制包含（即使扫描未检测到）
+force_exclude = ["Video"]      # 强制排除（即使扫描检测到）
+```
 
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `camera` | bool | `false` | 相机访问权限 |
-| `location` | bool | `false` | 位置信息权限 |
-| `network` | bool | `true` | 网络访问权限 |
+| `force_include` | `[String]` | `[]` | 强制包含的能力列表，用于动态调用或运行时加载的场景 |
+| `force_exclude` | `[String]` | `[]` | 强制排除的能力列表，调试用 |
+
+#### 能力列表
+
+| 能力名 | 触发组件 | 触发 sys_* 前缀 | 引入框架 |
+|--------|----------|------------------|----------|
+| `WebView` | `WebView` | — | WebKit |
+| `Video` | `Video` | `sys_video_` | AVFoundation, CoreMedia |
+| `Map` | `Map` | `sys_map_` | MapKit, CoreLocation |
+| `Scene3D` | `Scene3D` | `sys_scene_` | SceneKit |
+| `Camera` | `Camera` | `sys_qr_` | AVFoundation |
+| `Payment` | `Payment` | `sys_pay_` | StoreKit |
+| `Biometric` | `Biometric` | `sys_biometric_` | LocalAuthentication |
+| `Location` | `Location` | `sys_location_` | CoreLocation |
+| `Storage` | `Storage` | `sys_storage_` | — |
+| `DeepLink` | `DeepLink` | `sys_deep_link_` | — |
+| `Share` | `Share` | `sys_share_` | — |
+| `ImageExport` | `ImageExport` | `sys_image_save_` / `sys_image_compress` / `sys_image_resize` / `sys_image_get_info` | PhotosUI |
+| `Filter` | `Filter` | `sys_filter_` | — |
+| `DocumentParser` | `DocumentParser` | `sys_doc_` | PDFKit |
+| `FilePicker` | `FilePicker` | `sys_picker_` | PhotosUI, UniformTypeIdentifiers |
+| `Notification` | `Notification` | `sys_notification_` | — |
+| `Keyboard` | `TextField` / `TextArea` / `SearchBar` | — | — |
+| `Drawer` | Drawer 配置 | — | — |
+| `Network` | — | `sys_http_` / `sys_ws_` | — |
+| `MediaCapture` | — | `sys_camera_` / `sys_audio_` | AVFoundation |
+
+核心能力（`SystemUI`、`Navigation`、`Theme`、`I18n`）始终包含，无需手动配置。
 
 ### [theme]
 
@@ -221,9 +252,8 @@ initial_route = "home"
 | `[platform.harmony-pad]` | `enabled` | `false` |
 | `[platform.harmony-pad]` | `min_version` | `"3.0"` |
 | `[platform.web]` | `enabled` | `false` |
-| `[permissions]` | `camera` | `false` |
-| `[permissions]` | `location` | `false` |
-| `[permissions]` | `network` | `true` |
+| `[capabilities]` | `force_include` | `[]` |
+| `[capabilities]` | `force_exclude` | `[]` |
 | `[theme]` | `default` | `"light"` |
 | `[theme]` | `available` | `["light", "dark"]` |
 | `[i18n]` | `default` | `"zh-CN"` |
