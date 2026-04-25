@@ -1,6 +1,6 @@
 # 构建流水线
 
-Aether 的构建过程从 `.ae` + `.rs` 源文件到最终原生应用，共经历 12 个步骤。理解整个流水线有助于排查构建问题和定制构建行为。
+Aether 的构建过程从 `.ae` + `.rs` 源文件到最终原生应用，共经历 10 个步骤。理解整个流水线有助于排查构建问题和定制构建行为。
 
 ## 流水线概览
 
@@ -19,8 +19,7 @@ aether.toml + .ae + .rs + themes + i18n + assets
 │  8.  生成资源 Swift 文件                     │
 │  9.  生成 Xcode 项目                         │
 │  10. 生成 SwiftUI 视图文件                   │
-│  11. 移除 import app（xcodeproj 内不需要）   │
-│  12. xcodebuild — 最终原生编译               │
+│  11. xcodebuild — 最终原生编译               │
 └─────────────────────────────────────────────┘
         │
         ▼
@@ -82,17 +81,13 @@ aether.toml + .ae + .rs + themes + i18n + assets
 
 ### 9. 生成 Xcode 项目
 
-在构建输出目录生成 `.xcodeproj` 项目文件，将 UniFFI 绑定、资源 Swift 文件、SwiftUI 视图文件等组织到一个完整的 Xcode 项目中。
+在构建输出目录生成 `.xcodeproj` 项目文件（含 `.pbxproj`、`project.yml`、scheme 等），将 UniFFI 绑定、资源 Swift 文件、SwiftUI 视图文件等组织到一个完整的 Xcode 项目中。所有源文件位于同一个 target 内，无需跨模块 `import`。
 
 ### 10. 生成 SwiftUI 视图文件
 
 将每个 `.ae` 文件转换为对应的 SwiftUI 视图文件（`.swift`）。一个 `.ae` 文件生成一个 `.swift` 文件，组件 `.ae` 文件生成可复用的 SwiftUI 组件。
 
-### 11. 移除 import app
-
-在 Xcode 项目中，所有 Swift 文件都属于同一个编译目标，因此不需要 SPM 风格的 `import app` 语句。此步骤自动扫描并移除多余的 import 声明。
-
-### 12. xcodebuild
+### 11. xcodebuild
 
 最终步骤，调用 `xcodebuild` 编译完整的原生应用。不同平台使用不同的目标：
 
