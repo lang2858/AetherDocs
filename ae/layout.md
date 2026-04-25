@@ -358,18 +358,11 @@ Toolbar 内部使用 `ToolbarItem` 和 `ToolbarItemGroup` 显式声明每个工�
 
 | AE 值 | SwiftUI 值 | 说明 |
 |--------|-----------|------|
-| automatic | automatic | 自动选择位置 |
-| principal | principal | 导航栏居中（标题区域） |
-| leading | navigationBarLeading | 导航栏左侧 |
-| trailing | navigationBarTrailing | 导航栏右侧 |
-| topLeading | topBarLeading | 顶部栏左侧 |
-| topTrailing | topBarTrailing | 顶部栏右侧 |
-| bottomBar | bottomBar | 底部栏 |
-| cancellationAction | cancellationAction | 取消操作位置 |
-| confirmationAction | confirmationAction | 确认操作位置 |
-| destructiveAction | destructiveAction | 破坏性操作位置 |
-| primaryAction | primaryAction | 主要操作位置 |
-| status | status | 状态区域 |
+| left | cancellationAction | 左侧 |
+| center | principal | 居中 |
+| right | primaryAction | 右侧 |
+
+也可直接使用 SwiftUI 原始值（如 `automatic`、`confirmationAction`、`status` 等）作为高级用法。
 
 ### 事件
 
@@ -388,14 +381,14 @@ VStack(spacing=12) {
     Text("内容")
 }
 Toolbar {
-    ToolbarItem(placement=leading) {
+    ToolbarItem(placement=left) {
         Icon(name="sidebar.left" size=16 color="#8A90A2")
             .onTap({Home.toggle_sidebar()})
     }
-    ToolbarItem(placement=principal) {
+    ToolbarItem(placement=center) {
         Text("标题" size=14 weight="semibold")
     }
-    ToolbarItem(placement=trailing) {
+    ToolbarItem(placement=right) {
         Icon(name="gearshape" size=16 color="#8A90A2")
             .onTap({Home.open_settings()})
     }
@@ -409,7 +402,7 @@ VStack(spacing: 12) {
     Text("内容")
 }
 .toolbar {
-    ToolbarItem(placement: .navigationBarLeading) {
+    ToolbarItem(placement: .cancellationAction) {
         Button(action: { viewModel.toggleSidebar() }) {
             Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
         }
@@ -417,7 +410,7 @@ VStack(spacing: 12) {
     ToolbarItem(placement: .principal) {
         Text("标题").font(.system(size: 14, weight: .semibold))
     }
-    ToolbarItem(placement: .navigationBarTrailing) {
+    ToolbarItem(placement: .primaryAction) {
         Button(action: { viewModel.openSettings() }) {
             Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
         }
@@ -449,7 +442,7 @@ VStack(spacing: 12) {
 
 ```ae
 Toolbar {
-    ToolbarItemGroup(placement=trailing) {
+    ToolbarItemGroup(placement=right) {
         Icon(name="plus" size=16 color="#8A90A2")
             .onTap({Home.add_item()})
         Icon(name="gearshape" size=16 color="#8A90A2")
