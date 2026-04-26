@@ -355,43 +355,14 @@ HStack {
 
 ## Toolbar
 
-工具栏组件，用于在导航栏区域放置自定义按钮和内容。通常配合 `titlebar_style = "hidden"` 使用。
-
-Toolbar 内部使用 `ToolbarItem` 和 `ToolbarItemGroup` 显式声明每个工具栏项的位置，与 SwiftUI 的 API 一致。
-
-### 属性
-
-无专用属性。
-
-### 事件
-
-无。
-
-### 子组件
-
-支持 `ToolbarItem` 和 `ToolbarItemGroup`。
-
----
-
-## ToolbarItem
-
-工具栏单项，放在 `Toolbar` 内部，显式指定放置位置。
+自定义标题栏，替换 macOS 系统默认标题栏。不写 `Toolbar { }` 时使用系统默认标题栏。
 
 ### 属性
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| placement | enum | automatic | 放置位置（见下方 placement 映射表） |
-
-### placement 映射
-
-| AE 值 | SwiftUI 值 | 说明 |
-|--------|-----------|------|
-| left | cancellationAction | 左侧 |
-| center | principal | 居中 |
-| right | primaryAction | 右侧 |
-
-也可直接使用 SwiftUI 原始值（如 `automatic`、`confirmationAction`、`status` 等）作为高级用法。
+| height | num | 42 | 标题栏高度 (pt) |
+| bg | str | "#1E1E1E" | 标题栏背景色 |
 
 ### 事件
 
@@ -399,86 +370,61 @@ Toolbar 内部使用 `ToolbarItem` 和 `ToolbarItemGroup` 显式声明每个工�
 
 ### 子组件
 
-支持任意子组件，常用：`Icon`、`Text`、`HStack`。
+支持任意子组件。内容完全自由：用户用 HStack/Spacer/Text/Icon 等组件自行布局。
 
 ### 示例
 
-**AE 语法：**
-
 ```ae
-VStack(spacing=12) {
-    Text("内容")
-}
-Toolbar {
-    ToolbarItem(placement=left) {
-        Icon(name="sidebar.left" size=16 color="#8A90A2")
-            .onTap({Home.toggle_sidebar()})
-    }
-    ToolbarItem(placement=center) {
-        Text("标题" size=14 weight="semibold")
-    }
-    ToolbarItem(placement=right) {
-        Icon(name="gearshape" size=16 color="#8A90A2")
-            .onTap({Home.open_settings()})
+Toolbar(height=42 bg="#1E1E1E") {
+    ZStack {
+        // 底层：居中内容
+        HStack(spacing=0) {
+            Spacer()
+            HStack(spacing=14) {
+                Text("Aether" weight="semibold")
+                    .size(14)
+                    .color("#E5E7EB")
+            }
+            Spacer()
+        }
+        // 顶层：左+右内容，左留红绿灯间距
+        HStack(spacing=0) {
+            HStack(spacing=14) {
+                // 左侧内容
+            }
+            .pad(left=70)
+            Spacer()
+            HStack(spacing=6) {
+                Icon(name="magnifyingglass" size=14 color="#9CA3AF")
+                Icon(name="gearshape" size=14 color="#9CA3AF")
+            }
+            .pad(right=70)
+        }
     }
 }
 ```
 
-**SwiftUI 输出：**
+### 布局建议
+
+推荐使用 **ZStack 分层布局**避免红绿灯与内容重叠：
+
+- **底层**：用 `HStack { Spacer() 居中内容 Spacer() }` 实现真正居中
+- **顶层**：用 `HStack { 左侧内容.pad(left=70) Spacer() 右侧内容.pad(right=70) }` 放左右元素
+
+框架不在 toolbar 内添加红绿灯间距，由应用层 AE 代码自行控制。
+
+### macOS 生成代码
 
 ```swift
-VStack(spacing: 12) {
-    Text("内容")
-}
-.toolbar {
-    ToolbarItem(placement: .cancellationAction) {
-        Button(action: { viewModel.toggleSidebar() }) {
-            Image(systemName: "sidebar.left").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
-        }
-    }
-    ToolbarItem(placement: .principal) {
-        Text("标题").font(.system(size: 14, weight: .semibold))
-    }
-    ToolbarItem(placement: .primaryAction) {
-        Button(action: { viewModel.openSettings() }) {
-            Image(systemName: "gearshape").font(.system(size: 16)).foregroundColor(Color(hex: "#8A90A2"))
-        }
-    }
-}
+HStack(spacing: 0) { /* 用户内容 */ }
+    .padding(.horizontal, 8)
+    .background(Color(hex: "#1E1E1E"))
+    .frame(height: 42)
+    .clipped()
+    .onTapGesture(count: 2) { NSApplication.shared.windows.first?.zoom(nil) }
 ```
 
----
-
-## ToolbarItemGroup
-
-工具栏项分组，将多个子项放在同一个 placement 位置。当同一位置需要放置多个元素时使用。
-
-### 属性
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| placement | enum | automatic | 放置位置（同 ToolbarItem 的 placement 映射表） |
-
-### 事件
-
-无。
-
-### 子组件
-
-支持任意子组件。
-
-### 示例
-
-```ae
-Toolbar {
-    ToolbarItemGroup(placement=right) {
-        Icon(name="plus" size=16 color="#8A90A2")
-            .onTap({Home.add_item()})
-        Icon(name="gearshape" size=16 color="#8A90A2")
-            .onTap({Home.open_settings()})
-    }
-}
-```
+使用自定义 Toolbar 时，App 层自动隐藏系统标题栏、红绿灯按钮垂直居中到自定义高度、使用 ZStack 替代 TabView 切换 tab、双击标题栏最大化窗口。
 
 ---
 
