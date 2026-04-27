@@ -10,11 +10,14 @@ AE 修饰符以点语法链式调用，映射为 SwiftUI 的 View Modifier。本
 |-----------|-------------|------|
 | `.pad(N)` | `.padding(N)` | `.pad(12)` |
 | `.pad(top=T bottom=B left=L right=R)` | `.padding(EdgeInsets(top: T, leading: L, bottom: B, trailing: R))` | `.pad(left=8, right=8, top=4, bottom=4)` |
-| `.mar(N)` | `.padding(N)` (外层加负值或 Spacer) | `.mar(16)` |
+| `.mar(N)` | `Group { ... }.padding(N)` (外层包裹) | `.mar(16)` |
+| `.mar(top=T bottom=B left=L right=R)` | `Group { ... }.padding(EdgeInsets(...))` | `.mar(top=3, bottom=6, left=6, right=6)` |
 | `.w(N)` | `.frame(width: N)` | `.w(200)` |
 | `.w(infinity)` | `.frame(maxWidth: .infinity)` | `.w(infinity)` |
+| `.w(auto)` | 不生成 `.frame()` | `.w(auto)` (覆盖全局 w 样式) |
 | `.h(N)` | `.frame(height: N)` | `.h(48)` |
 | `.h(infinity)` | `.frame(maxHeight: .infinity)` | `.h(infinity)` |
+| `.h(auto)` | 不生成 `.frame()` | `.h(auto)` (覆盖全局 h 样式) |
 | `.flexGrow(1)` | `.frame(maxWidth: .infinity)` | `.flexGrow(1)` |
 
 ### 内边距示例
@@ -57,6 +60,42 @@ ScrollView(.vertical) { ... }.flexGrow(1)
 
 ```swift
 ScrollView(.vertical) { ... }.frame(maxWidth: .infinity)
+```
+
+### 外边距示例
+
+**统一外边距：**
+
+```ae
+VStack { ... }.mar(8)
+```
+
+```swift
+Group { VStack { ... } }.padding(8)
+```
+
+**方向外边距：**
+
+```ae
+HStack { ... }.mar(top=3, bottom=6, left=6, right=6)
+```
+
+```swift
+Group { HStack { ... } }.padding(EdgeInsets(top: 3, leading: 6, bottom: 6, trailing: 6))
+```
+
+> `.mar()` 通过 `Group { ... }.padding(...)` 实现外边距，与 `.pad()`（内边距）的方向相反。
+
+### auto 覆盖示例
+
+当全局样式设置了 `w = "infinity"` 或 `h = "infinity"`，某些组件需要按内容自适应时，使用 `.w(auto)` 或 `.h(auto)` 覆盖：
+
+```ae
+// 全局: VStack 默认 w=infinity → 撑满宽度
+VStack { ... }
+
+// 覆盖: .w(auto) → 不生成 .frame(maxWidth: .infinity)
+HStack { ... }.w(auto)
 ```
 
 ---
@@ -179,6 +218,10 @@ VStack { ... }
 |-----------|-------------|------|
 | `.size(N)` | `.font(.system(size: N))` | 设置字号 |
 | `.bold()` | `.bold()` | 加粗（仅 Text 有效） |
+| `.semibold()` | `.fontWeight(.semibold)` | 半粗 |
+| `.medium()` | `.fontWeight(.medium)` | 中等 |
+| `.light()` | `.fontWeight(.light)` | 细体 |
+| `.thin()` | `.fontWeight(.thin)` | 极细 |
 | `.italic()` | `.italic()` | 斜体（仅 Text 有效） |
 | `.color(color)` | `.foregroundColor(...)` | 设置文字颜色 |
 

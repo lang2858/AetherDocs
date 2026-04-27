@@ -20,6 +20,7 @@ aether.toml + .ae + .rs + themes + i18n + assets
 │  9.  生成资源 Swift 文件（按能力过滤）       │
 │  10. 生成 Xcode 项目                         │
 │  11. 生成 SwiftUI 视图文件                   │
+│  11a. 诊断检查 — 验证主题引用并报告错误     │
 │  12. xcodebuild — 最终原生编译               │
 └─────────────────────────────────────────────┘
         │
@@ -98,6 +99,10 @@ aether.toml + .ae + .rs + themes + i18n + assets
 ### 11. 生成 SwiftUI 视图文件
 
 将每个 `.ae` 文件转换为对应的 SwiftUI 视图文件（`.swift`）。一个 `.ae` 文件生成一个 `.swift` 文件，组件 `.ae` 文件生成可复用的 SwiftUI 组件。
+
+### 11a. 诊断检查
+
+在视图文件生成过程中，编译器验证所有主题引用（`$colors`、`$spacing`、`$radius`、`$typography`），检查令牌是否在主题配置中定义。发现错误时中断构建，不执行后续步骤。详见 [诊断系统](/guide/diagnostics)。
 
 ### 12. xcodebuild
 

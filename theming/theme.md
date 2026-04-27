@@ -107,9 +107,32 @@ border = "1,$colors.divider"
 
 ### 覆盖规则
 
-- AE 中手动书写的修饰符优先级高于全局样式，不会被重复添加
+样式按四级优先级合并，高优先级覆盖低优先级：
+
+| 优先级 | 来源 | 说明 |
+|--------|------|------|
+| 0 | System | 系统默认值 |
+| 1 | Framework | 框架预设 |
+| 2 | Theme | `[styles.Xxx]` 全局样式 |
+| 3 | AeExplicit | AE 代码中手动书写的修饰符 |
+
+- AE 中手动书写的修饰符（AeExplicit）优先级最高，覆盖全局样式
 - 如果 AE 中写了 `.border(1, "#xxx")`，全局样式的 `border` 不会重复追加
 - 如果 AE 中写了 `.color($colors.text)`，全局样式的 `color` 不会重复追加
+
+#### `auto` 回退机制
+
+当全局样式设置了某个属性（如 `w = "infinity"`），但某个组件需要按内容自适应时，使用 `auto` 值覆盖：
+
+```ae
+// 全局: VStack 默认 w=infinity → 撑满宽度
+VStack { ... }
+
+// 覆盖: .w(auto) → 不生成 .frame(maxWidth: .infinity)，按内容适配
+VStack { ... }.w(auto)
+```
+
+`auto` 可用于 `w`、`h`、`font`、`border` 等属性，效果是抑制对应 SwiftUI modifier 的生成。
 
 ### 支持的样式属性
 
