@@ -20,34 +20,38 @@ Aether 的主题系统通过 `theme.toml` 集中定义设计令牌（Design Toke
 | `primary` | 主强调色 |
 | `secondary` | 辅助强调色 |
 | `background` | 页面背景色 |
+| `surface` | 二级背景色（输入框、卡片等） |
+| `sidebar_bg` | 侧边栏背景色 |
+| `toolbar_bg` | 工具栏/标题栏背景色 |
+| `card_bg` | 卡片背景色 |
 | `text` | 正文文字色 |
 | `text_secondary` | 次要文字色 |
-| `text_hint` | 提示文字色 |
+| `text_hint` | 提示/占位文字色 |
 | `text_on_primary` | 主色上的文字色 |
-| `header_bg` | 头部背景色 |
-| `card_bg` | 卡片背景色 |
-| `info_bg` | 信息区背景色 |
-| `divider` | 分割线色 |
+| `divider` | 分割线/边框色 |
 | `error` | 错误色 |
+| `success` | 成功色 |
 | `accent_blue` | 蓝色强调色 |
 
 ## theme.toml 结构
 
 ```toml
 [colors]
-primary = "#007AFF"
-secondary = "#5856D6"
-background = "#FFFFFF"
-text = "#000000"
-text_secondary = "#666666"
-text_hint = "#999999"
+primary = "#0A84FF"
+secondary = "#5E5CE6"
+background = "#0D1117"
+surface = "#1E293B"
+toolbar_bg = "#161B22"
+sidebar_bg = "#0D1117"
+card_bg = "#1E293B"
+text = "#C9D1D9"
+text_secondary = "#8B949E"
+text_hint = "#6E7681"
 text_on_primary = "#FFFFFF"
-header_bg = "#F8F8F8"
-card_bg = "#FFFFFF"
-info_bg = "#F0F0F0"
-divider = "#E0E0E0"
-error = "#FF3B30"
-accent_blue = "#007AFF"
+divider = "#30363D"
+error = "#FF453A"
+success = "#3FB950"
+accent_blue = "#2563EB"
 
 [typography]
 headline = { size = 24, weight = "bold" }
@@ -74,8 +78,10 @@ font = "$typography.body"
 padding = "$spacing.medium"
 cornerRadius = "$radius.small"
 
-[styles.Divider]
-color = "$colors.divider"
+[styles.VStack]
+spacing = "$spacing.medium"
+padding = "$spacing.large"
+border = "1,$colors.divider"
 ```
 
 ### 各节说明
@@ -87,6 +93,84 @@ color = "$colors.divider"
 | `[spacing]` | 间距令牌 | 整数（pt） |
 | `[radius]` | 圆角令牌 | 整数（pt） |
 | `[styles.Xxx]` | 组件默认样式 | 引用其他令牌或直接值 |
+
+## 全局样式自动应用
+
+`[styles.Xxx]` 中定义的属性会自动应用到所有该类型的组件，无需在每个 AE 组件上手动重复书写。
+
+### 机制
+
+| 组件类别 | 应用时机 | 说明 |
+|---|---|---|
+| 即时组件（Text/Button/Icon/Image 等） | 生成时立即附加 | 在组件 dispatch 后统一追加到输出 |
+| 容器组件（VStack/HStack/ZStack/ScrollView） | `}` 闭合时附加 | 修饰符在闭括号后追加 |
+
+### 覆盖规则
+
+- AE 中手动书写的修饰符优先级高于全局样式，不会被重复添加
+- 如果 AE 中写了 `.border(1, "#xxx")`，全局样式的 `border` 不会重复追加
+- 如果 AE 中写了 `.color($colors.text)`，全局样式的 `color` 不会重复追加
+
+### 支持的样式属性
+
+| 属性 | 值格式 | 说明 | 示例 |
+|---|---|---|---|
+| `color` | `$colors.xxx` 或 `#hex` | 前景色 | `color = "$colors.text"` |
+| `background` | `$colors.xxx` 或 `#hex` | 背景色 | `background = "$colors.surface"` |
+| `font` | `$typography.xxx` | 排版 | `font = "$typography.body"` |
+| `spacing` | `$spacing.xxx` 或数字 | 间距（仅 Stack） | `spacing = "$spacing.medium"` |
+| `padding` | `$spacing.xxx` 或数字 | 内边距 | `padding = "$spacing.large"` |
+| `cornerRadius` | `$radius.xxx` 或数字 | 圆角 | `cornerRadius = "$radius.small"` |
+| `border` | `"宽度,$colors.xxx"` 或 `"宽度,#hex"` | 边框 | `border = "1,$colors.divider"` |
+| `w` | `"infinity"` 或数字 | 宽度 | `w = "infinity"` |
+| `h` | `"infinity"` 或数字 | 高度 | `h = "infinity"` |
+
+### 示例
+
+定义 `[styles.VStack]` 的 border 后，所有 VStack 自动带上边框，无需手动写 `.border()`：
+
+```toml
+[styles.VStack]
+spacing = "$spacing.medium"
+padding = "$spacing.large"
+border = "1,$colors.divider"
+w = "infinity"
+h = "infinity"
+```
+
+```ae
+// AE 代码 — 无需手动写 .border()
+VStack(spacing=0) {
+    Text("Hello")
+}
+
+// 生成的 Swift — border 和 frame 自动附加
+VStack(spacing: 0) {
+    Text("Hello")
+}.overlay(RoundedRectangle(cornerRadius: 4).stroke(AppColors.divider, lineWidth: 1))
+.frame(maxWidth: .infinity, alignment: .leading)
+.frame(maxHeight: .infinity)
+```
+
+如果某个 VStack 需要不同边框，手动覆盖即可：
+
+```ae
+// 手动覆盖全局样式
+VStack { ... }.border(2, "#E5E7EB")
+```
+
+如果全局样式设了 `w = "infinity"`，但某个容器需要按内容自适应宽度，使用 `.w(auto)` 覆盖：
+
+```ae
+// 全局: w = "infinity" → 自动撑满
+VStack { ... }
+
+// 覆盖: .w(auto) → 按内容适配宽度，不生成 .frame(maxWidth: .infinity)
+VStack { ... }.w(auto)
+
+// 同理，.h(auto) 覆盖全局 h = "infinity"
+HStack { ... }.h(auto)
+```
 
 ## 排版字重
 
@@ -123,10 +207,11 @@ Text("注释" font=$typography.caption)
 
 ### 样式组合引用
 
-组件默认样式通过 `[styles.Xxx]` 节定义，引用方式：
+组件默认样式通过 `[styles.Xxx]` 节定义，自动应用到所有该类型组件：
 
 ```ae
 Text("自动应用样式")   // 自动应用 [styles.Text] 中定义的 color 和 font
+VStack { ... }         // 自动应用 [styles.VStack] 中定义的 border
 ```
 
 ## 生成 Swift 代码
@@ -139,6 +224,8 @@ struct AppColors {
     static var primary: Color    // 根据 traitCollection 返回对应色值
     static var text: Color
     static var background: Color
+    static var surface: Color
+    static var divider: Color
     // ...
 }
 

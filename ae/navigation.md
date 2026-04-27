@@ -1,5 +1,28 @@
 # Navigation / 路由与导航
 
+---
+
+## Toolbar
+
+自定义 macOS 窗口标题栏，编译后会被提取并固定放置在窗口顶部，无论在 `.ae` 源码中的书写位置。
+
+```ae
+Toolbar(height=42 bg="#1E1E1E") {
+    // 标题栏内容
+}
+```
+
+**属性：**
+- `height` — 标题栏高度，默认 42
+- `bg` — 背景颜色，默认 `#1E1E1E`
+
+**注意事项：**
+- Toolbar 是系统级组件，编译时会自动提取并放置在窗口最顶部（titlebar 区域），不受源码中书写位置的影响
+- Toolbar 无需手动包裹在 VStack 中，编译器会自动将其与页面内容组合为 `VStack(spacing: 0)`
+- 双击标题栏会触发窗口缩放（zoom），该行为由编译器自动注入
+
+---
+
 Aether 的导航系统通过 `routes.ae` 和 `drawers.ae` 声明式配置，支持 Tabs、Stack、Split 等导航样式，以及多方向抽屉面板。
 
 ---
