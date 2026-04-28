@@ -13,11 +13,13 @@ AE 修饰符以点语法链式调用，映射为 SwiftUI 的 View Modifier。本
 | `.mar(N)` | `Group { ... }.padding(N)` (外层包裹) | `.mar(16)` |
 | `.mar(top=T bottom=B left=L right=R)` | `Group { ... }.padding(EdgeInsets(...))` | `.mar(top=3, bottom=6, left=6, right=6)` |
 | `.w(N)` | `.frame(width: N)` | `.w(200)` |
-| `.w(infinity)` | `.frame(maxWidth: .infinity)` | `.w(infinity)` |
+| `.w(infinity)` | `.frame(maxWidth: .infinity, alignment: .leading)` | `.w(infinity)` |
 | `.w(auto)` | 不生成 `.frame()` | `.w(auto)` (覆盖全局 w 样式) |
+| `.w(fit)` | `.fixedSize(horizontal: true, vertical: false)` | `.w(fit)` (内容自适应宽度，覆盖主题 infinity) |
 | `.h(N)` | `.frame(height: N)` | `.h(48)` |
 | `.h(infinity)` | `.frame(maxHeight: .infinity)` | `.h(infinity)` |
 | `.h(auto)` | 不生成 `.frame()` | `.h(auto)` (覆盖全局 h 样式) |
+| `.h(fit)` | `.fixedSize(horizontal: false, vertical: true)` | `.h(fit)` (内容自适应高度，覆盖主题 infinity) |
 | `.flexGrow(1)` | `.frame(maxWidth: .infinity)` | `.flexGrow(1)` |
 
 ### 内边距示例
