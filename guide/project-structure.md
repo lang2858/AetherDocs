@@ -98,13 +98,49 @@ Routes {
 | `components/nav_bar.ae` | `NavBar` |
 | `components/user_avatar.ae` | `UserAvatar` |
 
-组件可以在任意页面 `.ae` 文件中直接使用：
+组件定义使用 `component` 关键字，支持参数和默认值：
+
+```ae
+component ActionButton(icon, label, onClick, nameColor="$colors.text_on_primary", width=220) {
+    HStack(spacing=8) {
+        Icon(name="{icon}" size=16)
+        Text("{label}" size=14 color="{nameColor}")
+    }
+    .h(40)
+    .w({width})
+    .bg("$colors.accent")
+    .onClick({onClick})
+}
+```
+
+在页面 `.ae` 文件中通过 **`:Name()`** 语法调用自定义组件：
 
 ```ae
 VStack {
-    Card(title="Hello")
+    :ActionButton(icon="star" label="收藏" onClick={Home.on_favorite()})
 }
 ```
+
+除了 `components/` 目录中的独立文件，也可以在页面 `.ae` 文件内**内联定义**组件：
+
+```ae
+component StatusBar() {
+    HStack(spacing=8) {
+        Text("Ready").size(12).color("#9CA3AF")
+        Spacer()
+    }
+    .h(24)
+    .pad(left=12, right=12)
+    .bg("#1E1E1E")
+}
+
+VStack(spacing=0) {
+    :StatusBar()
+    Text("Hello!")
+}
+```
+
+> 详细的组件定义、调用和参数替换规则参见 [自定义组件](../ae/custom-component.md)。
 
 ## 其他目录
 
