@@ -373,3 +373,186 @@ if viewModel.isLoading {
     }
 }
 ```
+
+---
+
+## LineChart
+
+折线图组件，展示趋势数据。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| data | str | 是 | — | 数据源名称 |
+| xKey | str | 否 | — | X 轴字段名 |
+| yKey | str | 否 | — | Y 轴字段名 |
+| lineColor | str | 否 | — | 线条颜色 |
+| lineWidth | num | 否 | — | 线条宽度 |
+| showPoints | bool | 否 | false | 是否显示数据点 |
+| animated | bool | 否 | false | 是否启用动画 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+LineChart(data=$stats.trend xKey="date" yKey="value" lineColor=$colors.primary)
+```
+
+---
+
+## BarChart
+
+柱状图组件，展示分类数据对比。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| data | str | 是 | — | 数据源名称 |
+| barColor | str | 否 | — | 柱体颜色 |
+| animated | bool | 否 | false | 是否启用动画 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+BarChart(data=$stats.revenue barColor=$colors.primary)
+```
+
+---
+
+## PieChart
+
+饼图组件，展示占比分布。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| data | str | 是 | — | 数据源名称 |
+| colors | str | 否 | — | 颜色列表 |
+| showLabels | bool | 否 | false | 是否显示标签 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+PieChart(data=$stats.distribution colors="primary,secondary,accent" showLabels=true)
+```
+
+---
+
+## Gauge
+
+仪表盘组件，展示单一指标值。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| value | num | 是 | — | 当前值 |
+| minValue | num | 否 | — | 最小值 |
+| maxValue | num | 否 | — | 最大值 |
+| style | enum | 否 | arc | 样式：`arc` / `linear` |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+Gauge(value=72 minValue=0 maxValue=100 style="arc")
+```
+
+---
+
+## AreaChart
+
+面积图组件，展示累计趋势。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| data | str | 是 | — | 数据源名称 |
+| areaColor | str | 否 | — | 填充颜色 |
+| animated | bool | 否 | false | 是否启用动画 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+AreaChart(data=$stats.cumulative areaColor=$colors.primary)
+```
+
+---
+
+## ScatterChart
+
+散点图组件，展示数据分布关系。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| data | str | 是 | — | 数据源名称 |
+| pointColor | str | 否 | — | 数据点颜色 |
+| pointSize | num | 否 | — | 数据点大小 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+ScatterChart(data=$stats.correlation pointColor=$colors.secondary pointSize=4)
+```
+
+---
+
+## FileTree
+
+文件树组件，展示目录树结构。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| path | str | 是 | — | 根目录路径（别名 `root`） |
+| expanded | bool | 否 | false | 是否默认展开 |
+| showHidden | bool | 否 | false | 是否显示隐藏文件 |
+| filter | str | 否 | — | 文件过滤规则，如 `"*.swift"` |
+
+| 事件 | 签名 | 说明 |
+|------|------|------|
+| onSelect | `() => void` | 文件选中回调 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+FileTree(path="/src" onSelect={Home.on_file_select()})
+```
+
+带过滤和显示隐藏文件：
+
+```ae
+FileTree(path="/project" showHidden=true filter="*.swift" onSelect={Home.on_file_select()})
+```
+
+---
+
+## MapView
+
+地图视图组件，支持地图类型选择。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| latitude | num | — | 中心纬度 |
+| longitude | num | — | 中心经度 |
+| zoom | num | — | 缩放级别 |
+| showUserLocation | bool | false | 是否显示用户当前位置 |
+| mapType | enum | standard | 地图类型：`standard` / `satellite` / `hybrid` |
+
+继承 `_style`。
+
+### AE 示例
+
+```ae
+MapView(latitude=39.9042 longitude=116.4074 zoom=12 showUserLocation=true mapType="standard")
+    .w(100%)
+    .h(300)
+    .radius(12)
+```

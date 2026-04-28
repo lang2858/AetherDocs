@@ -13,7 +13,7 @@ AE 布局组件用于组织页面的空间结构。所有布局组件均支持 `
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的垂直间距 |
-| align | enum | center | 水平对齐方式：`start`（左对齐）/ `center`（居中）/ `end`（右对齐） |
+| align | enum | center | 水平对齐方式：`start`（左对齐）/ `center`（居中）/ `end`（右对齐）/ `top`（顶部）/ `bottom`（底部）/ `topStart`（左上）/ `topEnd`（右上）/ `bottomStart`（左下）/ `bottomEnd`（右下）/ `leading`（前导）/ `trailing`（尾随） |
 | justify | enum | start | 主轴排列方式：`start`（靠顶）/ `center`（居中）/ `end`（靠底） |
 
 ### 事件

@@ -12,6 +12,7 @@ Aether 的主题系统通过 `theme.toml` 集中定义设计令牌（Design Toke
 | `$typography.xxx` | `AppTypography.xxx` | 排版令牌 |
 | `$spacing.xxx` | `AppSpacing.xxx` | 间距令牌 |
 | `$radius.xxx` | `AppRadius.xxx` | 圆角令牌 |
+| `$assets.xxx` | `AppAssets.xxx` | 资源令牌（图片、图标等） |
 
 ### 常用颜色令牌
 
@@ -202,6 +203,7 @@ HStack { ... }.h(auto)
 | weight 值 | 说明 |
 |---|---|
 | `regular` | 常规 |
+| `normal` | 常规（`regular` 的别名） |
 | `bold` | 粗体 |
 | `semibold` | 半粗 |
 | `medium` | 中等 |

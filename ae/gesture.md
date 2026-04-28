@@ -251,3 +251,68 @@ if viewModel.showDetail {
 }
 .animation(.easeInOut(duration: 0.3), value: viewModel.showDetail)
 ```
+
+---
+
+## Draggable
+
+可拖拽组件，用于拖拽排序等交互场景。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| id | str | 是 | — | 拖拽标识 |
+
+继承 `_style`。支持子组件。
+
+### AE 示例
+
+```ae
+Draggable(id="task_1") {
+    Text("可拖拽的任务").pad(8).bg($colors.surface).radius(8)
+}
+```
+
+---
+
+## DropTarget
+
+拖拽目标区域组件，接收 Draggable 拖入的数据。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| accepts | str | 否 | — | 可接受的拖拽标识 |
+
+| 事件 | 签名 | 说明 |
+|------|------|------|
+| onDrop | `() => void` | 拖拽放下时触发 |
+
+继承 `_style`。支持子组件。
+
+### AE 示例
+
+```ae
+DropTarget(accepts="task" onDrop={Board.move_task()}) {
+    VStack(spacing=8) {
+        // 放置区域内容
+    }
+}
+```
+
+---
+
+## SectionHeader
+
+列表区段标题组件，用于分组头部。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| title | str | 是 | — | 区段标题 |
+| collapsible | bool | 否 | false | 是否可折叠 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+SectionHeader(title="最近文件" collapsible=true)
+```

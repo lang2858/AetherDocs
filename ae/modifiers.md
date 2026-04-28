@@ -111,6 +111,10 @@ HStack { ... }.w(auto)
 | `.radius(N)` | `.cornerRadius(N)` | `.radius(8)` |
 | `.op(N)` | `.opacity(N)` | `.op(0.5)` |
 | `.shadow(...)` | `.shadow(color:radius:x:y:)` | `.shadow(color="#000" radius=4 y=2)` |
+| `.tintColor("#hex")` | `.foregroundColor(Color(hex: "#hex"))` (renderingMode: .template) | `.tintColor("#5C9AE6")` |
+| `.tintColor($colors.token)` | `.foregroundColor(AppColors.token)` (renderingMode: .template) | `.tintColor($colors.primary)` |
+| `.mode("contain")` | `.aspectRatio(contentMode: .fit)` | `.mode("contain")` |
+| `.mode("cover")` | `.aspectRatio(contentMode: .fill)` | `.mode("cover")` |
 
 ### 背景色示例
 

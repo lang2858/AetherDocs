@@ -185,14 +185,14 @@ nav_drawer_is_open(id: "menu".to_string()) -> bool;
 
 | 属性 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
-| — | — | — | — | 无额外属性 |
+| title | str | 否 | — | 导航栏标题 |
 
 支持子组件。
 
 ### AE 示例
 
 ```ae
-NavigationStack {
+NavigationStack(title="设置") {
     Home
 }
 ```
@@ -237,13 +237,43 @@ NavigationLink(destination: DetailView()) {
 | 属性 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
 | selected | num | 否 | 0 | 当前选中索引 |
-| items | str | 否 | — | 标签项列表 |
+| items | any | 否 | — | 标签项列表 |
 
 | 事件 | 签名 | 说明 |
 |------|------|------|
 | onChange | `(index: num) => void` | 切换标签回调 |
 
 继承 `_style`。
+
+---
+
+## Drawer
+
+抽屉面板组件，从屏幕侧边滑出。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| visible | bool | 是 | — | 是否可见 |
+| position | enum | 否 | left | 方向：`left` / `right` / `top` / `bottom` |
+| width | num | 否 | — | 面板宽度（左右抽屉） |
+
+| 事件 | 签名 | 说明 |
+|------|------|------|
+| onClose | `() => void` | 关闭回调 |
+
+继承 `_style`。支持子组件。
+
+### AE 示例
+
+```ae
+Drawer(visible={Home.show_menu} position="left" width=280 onClose={Home.close_menu()}) {
+    VStack(spacing=16) {
+        Text("菜单项1")
+        Text("菜单项2")
+    }
+    .pad(16)
+}
+```
 
 ---
 

@@ -165,7 +165,8 @@ Text("item")
 
 | 属性 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
-| root | str | 是 | — | 根目录路径 |
+| path | str | 是 | — | 根目录路径（别名 `root`） |
+| expanded | bool | 否 | false | 是否默认展开 |
 | onSelect | callback | 是 | — | 文件选中回调，如 `{Home.on_file_select()}` |
 | showHidden | bool | 否 | false | 是否显示隐藏文件（以 `.` 开头） |
 | filter | str | 否 | — | 文件过滤规则，如 `"*.swift"` |
@@ -183,13 +184,13 @@ Text("item")
 ### AE 示例
 
 ```ae
-FileTree(root="/src" onSelect={Home.on_file_select()})
+FileTree(path="/src" onSelect={Home.on_file_select()})
 ```
 
 带过滤和显示隐藏文件：
 
 ```ae
-FileTree(root="/project" onSelect={Home.on_file_select()} showHidden=true filter="*.swift")
+FileTree(path="/project" onSelect={Home.on_file_select()} showHidden=true filter="*.swift")
 ```
 
 ### SwiftUI 输出

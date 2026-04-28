@@ -338,3 +338,121 @@ Popup(visible={Home.show_popup} anchor="menu_btn" position="bottom") {
     .pad(8)
 }
 ```
+
+---
+
+## ProgressBar
+
+线性进度条组件，Progress 的线性变体。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| value | num | 否 | — | 当前进度值 |
+| max | num | 否 | 100 | 最大值 |
+| type | enum | 否 | linear | 样式：linear / circular |
+| indeterminate | bool | 否 | false | 不确定进度（加载动画） |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+ProgressBar(value=70 max=100)
+ProgressBar(indeterminate=true)
+```
+
+---
+
+## ProgressCircle
+
+环形进度条组件，Progress 的环形变体。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| value | num | 否 | — | 当前进度值 |
+| size | num | 否 | — | 环形大小 |
+| strokeWidth | num | 否 | — | 笔触宽度 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+ProgressCircle(value=75 size=48 strokeWidth=4)
+```
+
+### SwiftUI 输出
+
+```swift
+ZStack {
+    Circle()
+        .stroke(AppColors.divider, lineWidth: strokeWidth)
+    Circle()
+        .trim(from: 0, to: CGFloat(value) / 100)
+        .stroke(AppColors.primary, lineWidth: strokeWidth)
+        .rotationEffect(.degrees(-90))
+}
+.frame(width: size, height: size)
+```
+
+---
+
+## LoadingOverlay
+
+全屏加载遮罩组件，覆盖在页面内容上方。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| visible | bool | 是 | — | 是否可见 |
+| text | str | 否 | — | 加载提示文字 |
+
+继承 `_style`。不支持子组件。
+
+### AE 示例
+
+```ae
+LoadingOverlay(visible={Home.is_saving} text="保存中...")
+```
+
+### SwiftUI 输出
+
+```swift
+if viewModel.isSaving {
+    ZStack {
+        Color.black.opacity(0.3)
+            .ignoresSafeArea()
+        VStack(spacing: 12) {
+            ProgressView()
+                .progressViewStyle(.circular)
+            Text("保存中...").font(.system(size: 14)).foregroundColor(.white)
+        }
+    }
+    .transition(.opacity)
+    .animation(.easeInOut(duration: 0.2), value: viewModel.isSaving)
+}
+```
+
+---
+
+## EmptyState
+
+空状态占位组件，带图标、标题、描述和操作按钮。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| icon | str | 否 | — | 空状态图标名称 |
+| title | str | 否 | — | 标题 |
+| description | str | 否 | — | 描述信息 |
+| actionText | str | 否 | — | 操作按钮文字 |
+
+| 事件 | 签名 | 说明 |
+|------|------|------|
+| onAction | `() => void` | 操作按钮点击 |
+
+继承 `_style`。支持子组件。
+
+### AE 示例
+
+```ae
+EmptyState(icon="inbox" title="暂无数据" description="点击按钮创建第一条记录" actionText="新建" onAction={Home.create()})
+```

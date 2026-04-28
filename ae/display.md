@@ -14,12 +14,12 @@ AE 展示组件用于呈现文本、图片、图标等可见内容。所有展�
 |------|------|--------|------|
 | text | str | 必填 | 文本内容 |
 | size | num | — | 字号 |
-| weight | enum | normal | 字重：`light` / `normal` / `medium` / `semibold` / `bold` |
+| weight | enum | normal | 字重：`thin` / `light` / `regular` / `normal` / `medium` / `semibold` / `bold` |
 | color | str | — | 文字颜色 |
 | maxLines | num | — | 最大行数限制 |
 | overflow | enum | wrap | 溢出处理：`clip`（裁剪）/ `ellipsis`（省略号）/ `wrap`（换行） |
 | align | enum | start | 对齐方式：`start` / `center` / `end` / `justify` |
-| numberFormat | str | — | 数字格式化模式 |
+| numberFormat | enum | — | 数字格式化：`none` / `decimal` / `percent` / `scientific` / `currency` |
 | decimalPlaces | num | — | 小数位数 |
 | prefix | str | — | 前缀文本 |
 | suffix | str | — | 后缀文本 |
@@ -112,7 +112,7 @@ Text("自适应文本")
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | src | str | 必填 | 图片资源路径，使用 `$assets.xxx` 引用 |
-| mode | enum | contain | 缩放模式：`contain` / `cover` / `stretch` / `center` |
+| mode | enum | contain | 缩放模式：`contain` / `cover` / `stretch` / `center` / `fill` |
 | tintColor | str | — | 着色颜色，将图片渲染为单色模板 |
 
 ### 事件
@@ -220,11 +220,16 @@ Image(systemName: "star.fill")
 
 ## Rectangle
 
-内置矩形形状组件，无专用属性，通过点修饰符控制外观。
+内置矩形形状组件，通过属性或点修饰符控制外观。
 
 ### 属性
 
-无专用属性。
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| w | num | — | 宽度（别名 `width`） |
+| h | num | — | 高度（别名 `height`） |
+| bg | str | — | 填充颜色（别名 `color`） |
+| radius | num | — | 圆角半径 |
 
 ### 事件
 
@@ -519,4 +524,98 @@ VStack(alignment: .leading, spacing: 0) {
 }
 .background(Color(hex: "#1E2333"))
 .cornerRadius(8)
+```
+
+---
+
+## RichText
+
+富文本展示组件，支持 Markdown、HTML 和 Attributed String 格式。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| content | str | 必填 | 富文本内容 |
+| format | enum | markdown | 格式：`markdown` / `html` / `attributed` |
+| linkColor | str | — | 链接颜色 |
+| detectLinks | bool | false | 是否自动检测链接 |
+| detectMentions | bool | false | 是否自动检测 @提及 |
+
+### 示例
+
+```ae
+RichText(content="**粗体** 和 *斜体*" format="markdown" linkColor=$colors.primary)
+```
+
+---
+
+## RichEditor
+
+富文本编辑器组件，支持格式化输入和工具栏。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| content | str | — | 编辑器内容绑定 |
+| format | enum | markdown | 格式：`markdown` / `html` / `attributed` |
+| placeholder | str | — | 占位提示文本 |
+| readOnly | bool | false | 是否只读 |
+| showToolbar | bool | false | 是否显示格式化工具栏 |
+| autoFocus | bool | false | 是否自动聚焦 |
+| maxHeight | num | — | 最大高度 |
+
+### 事件
+
+| 事件 | 说明 |
+|------|------|
+| onChange | 内容变化时触发 |
+| onFocus | 获取焦点时触发 |
+| onBlur | 失去焦点时触发 |
+
+### 示例
+
+```ae
+RichEditor(content={Note.body} format="markdown" placeholder="开始编写..." showToolbar=true onChange={Note.save()})
+```
+
+---
+
+## AsyncImage
+
+异步图片加载组件，支持占位图和着色。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| src | str | 必填 | 图片资源路径，使用 `$assets.xxx` 引用 |
+| mode | enum | contain | 缩放模式：`contain` / `cover` / `stretch` / `center` |
+| placeholder | str | — | 加载中占位图，使用 `$assets.xxx` 引用 |
+| tintColor | str | — | 着色颜色 |
+
+### 示例
+
+```ae
+AsyncImage(src=$assets.photo placeholder=$assets.placeholder).w(200).h(150).radius(8)
+```
+
+---
+
+## Canvas
+
+自定义绘制画布组件。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| drawsContent | bool | false | 是否绘制内容 |
+| dirtyRect | str | — | 脏区域矩形描述 |
+
+### 示例
+
+```ae
+Canvas(drawsContent=true).w(300).h(200)
 ```

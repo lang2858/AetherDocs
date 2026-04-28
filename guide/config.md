@@ -33,7 +33,7 @@ min_version = "16.0"
 enabled = false
 min_version = "10"
 
-[platform.android-pad]
+[platform.android_pad]
 enabled = false
 min_version = "10"
 
@@ -48,7 +48,7 @@ enabled = false
 enabled = false
 min_version = "3.0"
 
-[platform.harmony-pad]
+[platform.harmony_pad]
 enabled = false
 min_version = "3.0"
 
@@ -58,6 +58,12 @@ enabled = false
 [capabilities]
 force_include = []
 force_exclude = []
+
+[permissions]
+camera = false
+photo_library = false
+location = false
+notifications = false
 
 [theme]
 default = "light"
@@ -102,7 +108,8 @@ initial_route = "home"
 |----|------|
 | `default` | 标准标题栏，显示窗口标题和红绿灯按钮 |
 | `hidden` | 隐藏标题栏，保留红绿灯按钮，内容延伸到标题栏区域。通常配合 `Toolbar` 组件使用，编译器会自动添加顶部留白以避免内容与红绿灯按钮重叠 |
-| `inline` | macOS 13+ 内联标题栏，标题融入工具栏区域，适合工具类应用 |
+| `transparent` | 透明标题栏，标题栏区域透明，内容延伸到标题栏下方 |
+| `union` | macOS 13+ 统一标题栏，标题融入工具栏区域，适合工具类应用 |
 
 ### [platform.\*]
 
@@ -136,11 +143,11 @@ initial_route = "home"
 | `iphone` | `true` | `"16.0"` |
 | `ipad` | `false` | `"16.0"` |
 | `android` | `false` | `"10"` |
-| `android-pad` | `false` | `"10"` |
+| `android_pad` | `false` | `"10"` |
 | `windows` | `false` | `"10"` |
 | `linux` | `false` | `""` |
 | `harmony` | `false` | `"3.0"` |
-| `harmony-pad` | `false` | `"3.0"` |
+| `harmony_pad` | `false` | `"3.0"` |
 | `web` | `false` | — |
 
 ### [capabilities]
@@ -241,16 +248,16 @@ force_exclude = ["Video"]      # 强制排除（即使扫描检测到）
 | `[platform.ipad]` | `min_version` | `"16.0"` |
 | `[platform.android]` | `enabled` | `false` |
 | `[platform.android]` | `min_version` | `"10"` |
-| `[platform.android-pad]` | `enabled` | `false` |
-| `[platform.android-pad]` | `min_version` | `"10"` |
+| `[platform.android_pad]` | `enabled` | `false` |
+| `[platform.android_pad]` | `min_version` | `"10"` |
 | `[platform.windows]` | `enabled` | `false` |
 | `[platform.windows]` | `min_version` | `"10"` |
 | `[platform.linux]` | `enabled` | `false` |
 | `[platform.linux]` | `min_version` | `""` |
 | `[platform.harmony]` | `enabled` | `false` |
 | `[platform.harmony]` | `min_version` | `"3.0"` |
-| `[platform.harmony-pad]` | `enabled` | `false` |
-| `[platform.harmony-pad]` | `min_version` | `"3.0"` |
+| `[platform.harmony_pad]` | `enabled` | `false` |
+| `[platform.harmony_pad]` | `min_version` | `"3.0"` |
 | `[platform.web]` | `enabled` | `false` |
 | `[capabilities]` | `force_include` | `[]` |
 | `[capabilities]` | `force_exclude` | `[]` |

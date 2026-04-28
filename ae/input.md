@@ -17,6 +17,7 @@ AE 输入组件用于接收用户交互和数据输入。所有输入组件均�
 | disabled | bool | false | 是否禁用 |
 | loading | bool | false | 是否加载中 |
 | type | enum | primary | 按钮类型：`primary` / `secondary` / `outline` / `text` |
+| size | num | — | 按钮尺寸 |
 
 ### 特殊属性
 
@@ -375,17 +376,23 @@ Slider(value: Binding(
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | value | str | 必填 | 当前选中的值 |
-| options | str | — | 选项值列表，格式 `["a","b"]` |
-| labels | str | — | 选项显示文本，格式 `["选项A","选项B"]` |
+| options | any | — | 选项值列表，格式 `["a","b"]` |
+| labels | any | — | 选项显示文本，格式 `["选项A","选项B"]` |
 | placeholder | str | — | 占位提示文本 |
 | label | str | — | 选择器标签 |
 | disabled | bool | false | 是否禁用 |
+| color | str | — | 文字颜色 |
+| size | num | — | 字号 |
+| bg | str | — | 背景颜色 |
+| pad | padding | — | 内边距 |
+| radius | num | — | 圆角半径 |
+| border | border | — | 边框 |
 
 ### 事件
 
-| 事件 | 说明 |
-|------|------|
-| onChange | 选中项变化时触发 |
+| 事件 | 别名 | 说明 |
+|------|------|------|
+| onChange | on_change | 选中项变化时触发 |
 
 ### 示例
 
@@ -650,4 +657,131 @@ VStack(alignment: .leading, spacing: 4) {
     ))
     Text("至少8个字符").font(.system(size: 12)).foregroundColor(Color(hex: "#8A90A2"))
 }
+```
+
+---
+
+## Stepper
+
+步进器组件，用于数值增减操作。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | num | 0 | 当前值 |
+| min | num | 0 | 最小值 |
+| max | num | 100 | 最大值 |
+| step | num | 1 | 步进值 |
+
+### 事件
+
+| 事件 | 说明 |
+|------|------|
+| onChange | 值变化时触发 |
+
+### 示例
+
+```ae
+Stepper(value={Order.quantity} min=1 max=99 step=1 onChange={Order.update()})
+```
+
+---
+
+## Segment
+
+分段选择器组件，用于少量选项的快速切换。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | str | 必填 | 当前选中的值 |
+| options | any | — | 选项列表 |
+
+### 事件
+
+| 事件 | 说明 |
+|------|------|
+| onChange | 选中项变化时触发 |
+
+### 示例
+
+```ae
+Segment(value="week" options=["日","周","月"] onChange={Filter.set_period()})
+```
+
+---
+
+## Calendar
+
+日历选择组件，支持单选、多选和范围选择。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| selected | str | — | 选中日期 |
+| mode | enum | single | 选择模式：`single` / `multiple` / `range` |
+
+### 事件
+
+| 事件 | 说明 |
+|------|------|
+| onChange | 选中日期变化时触发 |
+
+### 示例
+
+```ae
+Calendar(mode="single" selected={Event.date} onChange={Event.setDate()})
+```
+
+---
+
+## PinInput
+
+验证码输入组件，用于 OTP/PIN 码场景。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | str | — | 输入值 |
+| length | num | — | 输入位数 |
+
+### 事件
+
+| 事件 | 说明 |
+|------|------|
+| onChange | 值变化时触发 |
+
+### 示例
+
+```ae
+PinInput(length=6 value={Auth.code} onChange={Auth.verify()})
+```
+
+---
+
+## SignaturePad
+
+手写签名组件，用于合同签署等场景。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | str | — | 签名数据绑定 |
+
+### 事件
+
+| 事件 | 说明 |
+|------|------|
+| onChange | 签名变化时触发 |
+| onClear | 清空签名时触发 |
+
+### 示例
+
+```ae
+SignaturePad(value={Contract.signature} onClear={Contract.clear()})
 ```

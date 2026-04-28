@@ -1,6 +1,6 @@
 # Media / 媒体组件
 
-媒体组件用于嵌入外部内容、播放音视频和展示地图。包含 WebView、Video、Audio、Map 和 Link。
+媒体组件用于嵌入外部内容、播放音视频和展示地图。包含 WebView、Video、Audio、VideoPlayer、AudioPlayer、Camera、QRScanner、Map、MapView 和 Link。
 
 ---
 
@@ -156,6 +156,97 @@ HStack(spacing: 12) {
 
 ---
 
+## VideoPlayer
+
+视频播放器组件，与 Video 功能类似但为独立组件形式。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| src | str | 是 | — | 视频资源路径，使用 `$assets.xxx` 引用 |
+| poster | str | 否 | — | 封面图，使用 `$assets.xxx` 引用 |
+| autoPlay | bool | 否 | false | 是否自动播放 |
+| controls | bool | 否 | false | 是否显示控制栏 |
+| loop | bool | 否 | false | 是否循环播放 |
+| muted | bool | 否 | false | 是否静音 |
+
+继承 `_style`。
+
+### AE 示例
+
+```ae
+VideoPlayer(src=$assets.intro_video poster=$assets.video_poster controls=true)
+    .w(100%)
+    .h(220)
+    .radius(12)
+```
+
+---
+
+## AudioPlayer
+
+音频播放器组件，与 Audio 功能类似但为独立组件形式。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| src | str | 是 | — | 音频资源路径，使用 `$assets.xxx` 引用 |
+| autoPlay | bool | 否 | false | 是否自动播放 |
+| controls | bool | 否 | false | 是否显示控制栏 |
+| loop | bool | 否 | false | 是否循环播放 |
+
+继承 `_style`。
+
+### AE 示例
+
+```ae
+AudioPlayer(src=$assets.bg_music controls=true loop=true)
+    .w(100%)
+    .h(44)
+```
+
+---
+
+## Camera
+
+相机组件，调用设备摄像头进行拍照。
+
+| 事件 | 签名 | 说明 |
+|------|------|------|
+| onCapture | `() => void` | 拍照完成回调 |
+
+继承 `_style`。
+
+### AE 示例
+
+```ae
+Camera(onCapture={Profile.on_capture()})
+    .w(320)
+    .h(240)
+    .radius(8)
+```
+
+---
+
+## QRScanner
+
+二维码扫描组件，调用设备摄像头进行扫码。
+
+| 事件 | 签名 | 说明 |
+|------|------|------|
+| onScan | `() => void` | 扫码成功回调 |
+
+继承 `_style`。
+
+### AE 示例
+
+```ae
+QRScanner(onScan={Auth.on_qr_scan()})
+    .w(200)
+    .h(200)
+    .radius(8)
+```
+
+---
+
 ## Map
 
 地图组件，展示地图视图和标记点。
@@ -239,3 +330,28 @@ Link("访问官网", destination: URL(string: "https://aether.dev")!)
 ```
 
 > 注意：Link 在 macOS 上使用 `NSWorkspace.shared.open(url)`，iOS 上使用 `UIApplication.shared.open(url)` 处理外部链接跳转。
+
+---
+
+## MapView
+
+地图视图组件，与 Map 功能类似但支持地图类型选择。
+
+| 属性 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| latitude | num | 否 | — | 中心纬度 |
+| longitude | num | 否 | — | 中心经度 |
+| zoom | num | 否 | — | 缩放级别 |
+| showUserLocation | bool | 否 | false | 是否显示用户当前位置 |
+| mapType | enum | 否 | standard | 地图类型：`standard` / `satellite` / `hybrid` |
+
+继承 `_style`。
+
+### AE 示例
+
+```ae
+MapView(latitude=39.9042 longitude=116.4074 zoom=12 showUserLocation=true mapType="standard")
+    .w(100%)
+    .h(300)
+    .radius(12)
+```
