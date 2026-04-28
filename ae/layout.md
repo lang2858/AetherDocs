@@ -13,8 +13,8 @@ AE 布局组件用于组织页面的空间结构。所有布局组件均支持 `
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的垂直间距 |
-| align | enum | center | 水平对齐方式：`start`（左对齐）/ `center`（居中）/ `end`（右对齐）/ `top`（顶部）/ `bottom`（底部）/ `topStart`（左上）/ `topEnd`（右上）/ `bottomStart`（左下）/ `bottomEnd`（右下）/ `leading`（前导）/ `trailing`（尾随） |
-| justify | enum | start | 主轴排列方式：`start`（靠顶）/ `center`（居中）/ `end`（靠底） |
+| align | enum | center | 水平对齐方式（交叉轴）：`start`（前导/左）/ `center`（居中）/ `end`（尾随/右）。使用方向中性值，Codegen 根据平台映射为具体值。 |
+| justify | enum | start | 主轴排列方式：`start`（前导/靠顶）/ `center`（居中）/ `end`（尾随/靠底）。使用方向中性值。 |
 
 ### 事件
 
@@ -65,8 +65,8 @@ VStack(alignment: .leading, spacing: 12) {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的水平间距 |
-| align | enum | center | 垂直对齐方式：`top`（顶部对齐）/ `center`（居中）/ `bottom`（底部对齐） |
-| justify | enum | start | 主轴排列方式：`start`（靠左）/ `center`（居中）/ `end`（靠右） |
+| align | enum | center | 垂直对齐方式（交叉轴）：`start`（顶部）/ `center`（居中）/ `end`（底部）。使用方向中性值，Codegen 根据平台映射为具体值。 |
+| justify | enum | start | 主轴排列方式：`start`（前导/靠左）/ `center`（居中）/ `end`（尾随/靠右）。使用方向中性值。 |
 
 ### 事件
 
@@ -147,7 +147,7 @@ justify 通过在子元素前后插入 `Spacer()` 实现主轴排列：
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| align | enum | center | 对齐方式：`topStart`（左上）/ `center`（居中）/ `bottomEnd`（右下） |
+| align | enum | center | 对齐方式：`start`（前导/左上）/ `center`（居中）/ `end`（尾随/右下）。使用方向中性值，Codegen 根据平台映射为具体值。 |
 
 ### 事件
 
