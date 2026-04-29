@@ -377,28 +377,16 @@ HStack {
 ```ae
 Toolbar(height=42 bg="#1E1E1E") {
     ZStack {
-        // 底层：居中内容
-        HStack(spacing=0) {
-            Spacer()
-            HStack(spacing=14) {
-                Text("Aether" weight="semibold")
-                    .size(14)
-                    .color("#E5E7EB")
-            }
-            Spacer()
+        ToolbarItem(position=center) {
+            Text("Aether").size(14).semibold()
         }
-        // 顶层：左+右内容，左留红绿灯间距
-        HStack(spacing=0) {
-            HStack(spacing=14) {
-                // 左侧内容
-            }
-            .pad(left=70)
-            Spacer()
-            HStack(spacing=6) {
-                Icon(name="magnifyingglass" size=14 color="#9CA3AF")
-                Icon(name="gearshape" size=14 color="#9CA3AF")
-            }
-            .pad(right=70)
+        ToolbarItem(position=left) {
+            Text("Aether").size(14).semibold()
+            Text("MyApp").size(13)
+        }
+        ToolbarItem(position=right) {
+            Icon(name="gearshape.fill" size=18)
+            Text("ZB").size(12).bold()
         }
     }
 }
@@ -406,12 +394,13 @@ Toolbar(height=42 bg="#1E1E1E") {
 
 ### 布局建议
 
-推荐使用 **ZStack 分层布局**避免红绿灯与内容重叠：
+推荐使用 **ToolbarItem + ZStack 分层布局**：
 
-- **底层**：用 `HStack { Spacer() 居中内容 Spacer() }` 实现真正居中
-- **顶层**：用 `HStack { 左侧内容.pad(left=70) Spacer() 右侧内容.pad(right=70) }` 放左右元素
+- `ToolbarItem(position=center)` — 强制居中，内容前后自动插入 Spacer
+- `ToolbarItem(position=left)` — 靠左排列，macOS 自动注入 70pt 红绿灯占位
+- `ToolbarItem(position=right)` — 靠右排列，内容前自动插入 Spacer
 
-框架不在 toolbar 内添加红绿灯间距，由应用层 AE 代码自行控制。
+三个 ToolbarItem 在 ZStack 中层叠，居中内容不会被左右区域挤压。
 
 ### macOS 生成代码
 

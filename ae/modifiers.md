@@ -375,25 +375,50 @@ Button(action: { viewModel.create() }) {
 
 ---
 
-## 修饰符链式调用顺序
+## 修饰符应用顺序
 
-修饰符按书写顺序从左到右依次应用，顺序影响最终效果。例如背景色和圆角的顺序：
+> **重要：** AE 源码中修饰符的书写顺序不影响最终生成结果。所有修饰符会按照固定的规范顺序输出到 SwiftUI 代码中。
+
+AE 编译器将修饰符按以下固定顺序输出（从内到外包裹）：
+
+| 顺序 | 修饰符 | 说明 |
+|------|--------|------|
+| 1 | `w` | 宽度 |
+| 2 | `h` | 高度 |
+| 3 | `padding` | 内边距 |
+| 4 | `background` | 背景色 |
+| 5 | `cornerRadius` | 圆角 |
+| 6 | `border` | 边框 |
+| 7 | `font` | 字体 |
+| 8 | `font_weight` | 字重 |
+| 9 | `font_italic` | 斜体 |
+| 10 | `color` | 前景色 |
+| 11 | `flexGrow` | 弹性增长 |
+| 12 | `justify_frame` | 对齐帧 |
+
+这意味着无论你如何书写修饰符，生成的 SwiftUI 代码始终遵循这个顺序。例如：
 
 ```ae
-// 推荐：先设背景再设圆角
-VStack { ... }.bg("#1E2333").radius(12)
-
-// 不推荐：圆角在背景之前可能裁剪异常
-VStack { ... }.radius(12).bg("#1E2333")
+// 这两种写法生成相同的 SwiftUI 代码
+HStack { ... }.border(1, $colors.divider).h(80).pad(left=6, right=6)
+HStack { ... }.pad(left=6, right=6).h(80).border(1, $colors.divider)
 ```
 
 ```swift
-// 推荐
-VStack { ... }.background(Color(hex: "#1E2333")).cornerRadius(12)
-
-// 不推荐
-VStack { ... }.cornerRadius(12).background(Color(hex: "#1E2333"))
+// 两者都生成：
+HStack { ... }.padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)).frame(height: 80).overlay(RoundedRectangle(cornerRadius: 4).stroke(AppColors.divider, lineWidth: 1))
 ```
+
+### 顺序对视觉效果的影响
+
+由于修饰符从内到外包裹，顺序决定了各层之间的关系：
+
+- **`w`/`h` → `bg`**：frame 在 background 内部，background 能撑满指定的高度/宽度
+- **`w`/`h` → `border`**：frame 在 border 内部，border 能撑满指定的高度/宽度
+- **`pad` → `bg`**：padding 在 background 内部，background 不包含 padding 区域
+- **`bg` → `radius`**：背景色先应用，圆角裁剪背景
+
+如果需要 border 包含 padding 区域的效果，应使用 `.mar()`（外边距）代替 `.pad()`（内边距），或直接在 border 后手动调整间距
 
 ---
 

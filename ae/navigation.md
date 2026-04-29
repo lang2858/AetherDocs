@@ -20,6 +20,39 @@ Toolbar(height=42 bg="#1E1E1E") {
 - Toolbar 是系统级组件，编译时会自动提取并放置在窗口最顶部（titlebar 区域），不受源码中书写位置的影响
 - Toolbar 无需手动包裹在 VStack 中，编译器会自动将其与页面内容组合为 `VStack(spacing: 0)`
 - 双击标题栏会触发窗口缩放（zoom），该行为由编译器自动注入
+- 推荐使用 ToolbarItem 组件声明左/中/右区域，框架自动处理平台差异（如 macOS 红绿灯间距）
+
+---
+
+## ToolbarItem
+
+Toolbar 内的区域声明组件，用于将标题栏内容按 `position` 分为左/中/右三块，框架根据平台自动注入间距。
+
+```ae
+Toolbar(bg=$colors.toolbar_bg height=36) {
+    ZStack {
+        ToolbarItem(position=center) {
+            Text("标题")
+        }
+        ToolbarItem(position=left) {
+            Text("Aether").size(14).semibold()
+        }
+        ToolbarItem(position=right) {
+            Icon(name="gearshape.fill" size=18)
+        }
+    }
+}
+```
+
+**属性：**
+- `position` — 区域位置：`left` / `center` / `right`，默认 `left`
+
+**生成规则：**
+- `position=center`：`HStack(spacing: 0) { Spacer() 内容 Spacer() }`，强制居中
+- `position=left`：`HStack(spacing: 0) { Color.clear.frame(width: 70) 内容 Spacer() }`，macOS 自动注入 70pt 红绿灯占位
+- `position=right`：`HStack(spacing: 0) { Spacer() 内容 }`，靠右对齐
+
+三个 ToolbarItem 在 ZStack 中层叠，实现居中内容不被左右挤压。
 
 ---
 
