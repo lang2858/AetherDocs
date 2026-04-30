@@ -1,5 +1,13 @@
 # 快速开始
 
+## Why Aether?
+
+Aether 专为 AI 代码生成设计 — AE 语言的简洁声明式语法让 AI 只需输出描述，框架自动生成全平台原生代码：
+
+- **AI-Friendly**: 无样板代码，语义化组件一行即组件，声明即实现
+- **自动绑定**: `$state` 声明即绑定，`$logic.method()` 调用 Rust 逻辑层
+- **全平台**: macOS/iOS (SwiftUI) · Android (Compose) · 微信小程序 (WXML) · Backend (Rust，规划中)
+
 ## 环境要求
 
 在开始之前，请确保你的开发环境满足以下要求：
@@ -144,13 +152,15 @@ open gen/macos/MyappApp.xcodeproj
 
 | 平台 | 参数 | 说明 |
 |------|------|------|
-| Android | `android` | 安卓手机应用 |
+| Android | `android` | 安卓手机应用 (Jetpack Compose) |
 | Android Pad | `android-pad` | 安卓平板应用 |
-| Windows | `windows` | Windows 桌面应用 |
+| 微信小程序 | `wechat` | 微信小程序 (WXML/WXSS) |
+| Windows | `windows` | Windows 桌面应用 (WinUI 3) |
 | Linux | `linux` | Linux 桌面应用 |
-| HarmonyOS | `harmony` | 鸿蒙手机应用 |
+| HarmonyOS | `harmony` | 鸿蒙手机应用 (ArkUI) |
 | HarmonyOS Pad | `harmony-pad` | 鸿蒙平板应用 |
-| Web | `web` | Web 应用 |
+| Web | `web` | Web 应用 (WASM) |
+| Backend | — | 后端服务 (Rust) — 规划中 |
 
 ## CLI 命令参考
 
