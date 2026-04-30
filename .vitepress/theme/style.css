@@ -18,12 +18,16 @@
   50% { transform: translateY(-10px); }
 }
 
-/* More compact features grid */
-.VPFeatures .container {
-  max-width: 900px !important;
+.VPHero {
+  padding-top: 100px !important;
 }
 
-.VPFeature .details {
-  font-size: 13px;
-  line-height: 1.5;
+.VPHero .text {
+  font-size: 32px !important;
+  white-space: nowrap !important;
+}
+
+.VPHero .tagline {
+  font-size: 16px !important;
+  color: #888 !important;
 }

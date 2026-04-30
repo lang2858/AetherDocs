@@ -20,28 +20,20 @@ hero:
       link: https://github.com/lang2858/AetherDocs
 
 features:
-  - icon: 🤖
-    title: AI-Friendly
+  - title: AI-Friendly
     details: 声明即实现，零样板代码 — AI 只需输出 AE 描述
-  - icon: 🔗
-    title: 自动绑定
-    details: $state 响应式 · $logic Rust 逻辑层 · UniFFI 桥接
-  - icon: 🍎
-    title: Apple
+  - title: 自动绑定
+    details: 写好变量就能用，数据变了界面自动更新，逻辑层用 Rust 写直接调用
+  - title: Aether Studio
+    details: 官方 IDE，实时预览 AE 代码效果，所见即所得
+  - title: Apple
     details: macOS · iOS · iPad — SwiftUI 原生
-  - icon: 🤖
-    title: Android
+  - title: Android
     details: Jetpack Compose（规划中）
-  - icon: 💬
-    title: 微信小程序
+  - title: 微信小程序
     details: WXML / WXSS（规划中）
-  - icon: 🖥️
-    title: Desktop
-    details: Windows · Linux（规划中）
-  - icon: 🌐
-    title: Web
+  - title: Desktop & HarmonyOS
+    details: Windows · Linux · 鸿蒙（规划中）
+  - title: Web
     details: WASM（规划中）
-  - icon: ⚙️
-    title: Backend
-    details: Rust 后端（规划中）
 ---
