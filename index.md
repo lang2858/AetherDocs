@@ -3,32 +3,45 @@ layout: home
 
 hero:
   name: Aether
-  text: AI-Native Cross-Platform App Framework
-  tagline: 一句话描述，全平台生成 — AI 只需输出 AE，框架自动生成原生代码
+  text: AI-Native 跨平台应用框架
+  tagline: 用 AE 描述应用，自动生成 SwiftUI / Compose / WXML / Rust 原生代码
+  image:
+    src: /logo.svg
+    alt: Aether
   actions:
     - theme: brand
-      text: Quick Start
+      text: 快速开始
       link: /guide/getting-started
     - theme: alt
-      text: AE Syntax
-      link: /guide/syntax
+      text: AE 语法
+      link: /ae/syntax
+    - theme: alt
+      text: GitHub
+      link: https://github.com/lang2858/AetherDocs
 
 features:
-  - title: AI-Friendly AE 语言
-    icon: 🤖
-    details: 简洁声明式语法，无样板代码；语义化组件一行即组件；声明即实现，AI 只需输出 AE 描述，框架自动生成 SwiftUI/Compose/WXML + 原生逻辑层
-  - title: 自动状态绑定
-    icon: 🔗
-    details: $state 声明即绑定，自动生成 ViewModel + @Published；$logic.method() 调用 Rust 逻辑层，UniFFI 桥接原生；组件 props 自动传递
-  - title: 全平台原生
-    icon: ⚡
-    details: macOS/iOS (SwiftUI) · Android (Compose) · Web (WASM) · 微信小程序 (WXML) · Backend (Rust，规划中)
+  - icon: 🤖
+    title: AI-Friendly
+    details: 声明即实现，零样板代码 — AI 只需输出 AE 描述
+  - icon: 🔗
+    title: 自动绑定
+    details: $state 响应式 · $logic Rust 逻辑层 · UniFFI 桥接
+  - icon: 🍎
+    title: Apple
+    details: macOS · iOS · iPad — SwiftUI 原生
+  - icon: 🤖
+    title: Android
+    details: Jetpack Compose（规划中）
+  - icon: 💬
+    title: 微信小程序
+    details: WXML / WXSS（规划中）
+  - icon: 🖥️
+    title: Desktop
+    details: Windows · Linux（规划中）
+  - icon: 🌐
+    title: Web
+    details: WASM（规划中）
+  - icon: ⚙️
+    title: Backend
+    details: Rust 后端（规划中）
 ---
-
-<div style="text-align:center; padding: 12px 0 4px;">
-
-| macOS | iOS | Android | Web | 微信小程序 | Backend |
-|-------|-----|---------|-----|-----------|---------|
-| ✅ SwiftUI | ✅ SwiftUI | 🔜 Compose | 🔜 WASM | 🔜 WXML | 🔜 Rust |
-
-</div>

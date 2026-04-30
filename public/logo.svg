@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360">
+  <defs>
+    <linearGradient id="aether-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bd34fe"/>
+      <stop offset="50%" stop-color="#646cff"/>
+      <stop offset="100%" stop-color="#41d1ff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#bd34fe" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#41d1ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Glow -->
+  <circle cx="180" cy="180" r="160" fill="url(#glow)"/>
+  <!-- Aether symbol: interconnected nodes representing cross-platform -->
+  <g transform="translate(180,180)" fill="none" stroke="url(#aether-grad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Central hub -->
+    <circle cx="0" cy="0" r="16" fill="url(#aether-grad)" opacity="0.9"/>
+    <!-- Outer nodes -->
+    <circle cx="0" cy="-80" r="10" fill="url(#aether-grad)" opacity="0.8"/>
+    <circle cx="69" cy="-40" r="10" fill="url(#aether-grad)" opacity="0.8"/>
+    <circle cx="69" cy="40" r="10" fill="url(#aether-grad)" opacity="0.8"/>
+    <circle cx="0" cy="80" r="10" fill="url(#aether-grad)" opacity="0.8"/>
+    <circle cx="-69" cy="40" r="10" fill="url(#aether-grad)" opacity="0.8"/>
+    <circle cx="-69" cy="-40" r="10" fill="url(#aether-grad)" opacity="0.8"/>
+    <!-- Connections from center -->
+    <line x1="0" y1="-16" x2="0" y2="-70" stroke-width="2.5" opacity="0.7"/>
+    <line x1="14" y1="-8" x2="61" y2="-34" stroke-width="2.5" opacity="0.7"/>
+    <line x1="14" y1="8" x2="61" y2="34" stroke-width="2.5" opacity="0.7"/>
+    <line x1="0" y1="16" x2="0" y2="70" stroke-width="2.5" opacity="0.7"/>
+    <line x1="-14" y1="8" x2="-61" y2="34" stroke-width="2.5" opacity="0.7"/>
+    <line x1="-14" y1="-8" x2="-61" y2="-34" stroke-width="2.5" opacity="0.7"/>
+    <!-- Outer ring connections -->
+    <line x1="8" y1="-83" x2="61" y2="-47" stroke-width="1.5" opacity="0.4"/>
+    <line x1="77" y1="-33" x2="77" y2="33" stroke-width="1.5" opacity="0.4"/>
+    <line x1="61" y1="47" x2="8" y2="83" stroke-width="1.5" opacity="0.4"/>
+    <line x1="-8" y1="83" x2="-61" y2="47" stroke-width="1.5" opacity="0.4"/>
+    <line x1="-77" y1="33" x2="-77" y2="-33" stroke-width="1.5" opacity="0.4"/>
+    <line x1="-61" y1="-47" x2="-8" y2="-83" stroke-width="1.5" opacity="0.4"/>
+  </g>
+</svg>
