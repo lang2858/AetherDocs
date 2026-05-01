@@ -454,3 +454,62 @@ Canvas(onRender={Home.get_commands}).w(100%).h(400)
 ```
 
 Rust 侧 `get_commands` 方法返回 `String`（DisplayList JSON），Canvas `onAppear` 时自动调用。
+
+---
+
+## 11. Block 自动布局
+
+Block 支持 parent_id 树形嵌套，LayoutEngine 自动计算垂直排列位置。
+
+### LayoutEngine
+
+```rust
+use crate::layout::{layout_engine_new, layout_blocks, block_height};
+
+let engine = layout_engine_new();
+let results = layout_blocks(&engine, &blocks);
+// results: Vec<LayoutResult> { block_id, x, y, height, indent_level }
+```
+
+| 字段 | 默认值 | 说明 |
+|------|--------|------|
+| `indent_width` | 24.0 | 每级缩进宽度 |
+| `base_x` | 40.0 | 起始 x 坐标 |
+| `gap` | 12.0 | Block 间距 |
+| `padding_top` | 20.0 | 顶部留白 |
+
+### 树形嵌套
+
+Block 的 `parent_id: Option<String>` 字段指定父 Block：
+
+```rust
+let child = Block {
+    id: "child1".to_string(),
+    parent_id: Some("b1".to_string()),  // 嵌套在 b1 下
+    // ...
+};
+```
+
+- `parent_id = None` → 顶层 Block
+- 折叠的 Block：子 Block 不参与布局（自动跳过）
+- `indent_level` 由 LayoutEngine 沿 parent 链计算
+
+### 高度估算
+
+`block_height()` 根据内容估算高度：
+
+- Text/AiReply：按字符数估算行数 × size × 1.8
+- Code collapsed：36.0，展开：行数 × 20.0 + 24.0
+- Sketch：80.0
+
+### 增删方法
+
+Home struct 提供：
+
+| 方法 | 说明 |
+|------|------|
+| `add_text_block(text)` | 添加文字 Block |
+| `remove_block(id)` | 删除 Block 及子 Block |
+| `toggle_collapse(id)` | 切换折叠状态 |
+
+每次增删后 `get_commands()` 自动重算布局。
