@@ -258,6 +258,62 @@ ScrollView(.horizontal, showsIndicators: false) {
 
 ---
 
+## SplitView
+
+可拖拽分隔线的分割视图，支持水平和垂直方向。在 macOS 上映射为 `AeSplitView`（基于 `HSplitView`/`VSplitView` 的自定义封装）。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| direction | enum | horizontal | 分割方向：`horizontal`（水平分割）/ `vertical`（垂直分割） |
+| initialRatio | num | 0.5 | 初始分割比例（0.0-1.0） |
+| minFirst | num | — | 第一个面板的最小尺寸（pt） |
+| minSecond | num | — | 第二个面板的最小尺寸（pt） |
+| collapsibleFirst | bool | false | 第一个面板是否可折叠 |
+| collapsibleSecond | bool | false | 第二个面板是否可折叠 |
+
+### 事件
+
+无。
+
+### 子组件
+
+支持两个子组件，分别对应左右/上下两个面板。
+
+### 示例
+
+**AE 语法：**
+
+```ae
+SplitView(direction="horizontal" initialRatio=0.3 minFirst=200) {
+    // 左侧面板
+    VStack {
+        Text("导航栏")
+    }
+    
+    // 右侧面板
+    VStack {
+        Text("内容区")
+    }
+}
+```
+
+**SwiftUI 输出：**
+
+```swift
+AeSplitView(direction: .horizontal, initialRatio: 0.3, minFirst: 200) {
+    VStack {
+        Text("导航栏")
+    }
+    VStack {
+        Text("内容区")
+    }
+}
+```
+
+---
+
 ## View
 
 通用容器组件，用于分组、点击交互或样式包裹。

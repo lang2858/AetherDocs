@@ -265,18 +265,54 @@ NavigationLink(destination: DetailView()) {
 
 ## TabBar
 
-标签栏，底部标签导航。
+底部标签栏导航组件，映射为 SwiftUI 的 `TabView`。
 
-| 属性 | 类型 | 必填 | 默认值 | 说明 |
-|------|------|------|--------|------|
-| selected | num | 否 | 0 | 当前选中索引 |
-| items | any | 否 | — | 标签项列表 |
+### 属性
 
-| 事件 | 签名 | 说明 |
-|------|------|------|
-| onChange | `(index: num) => void` | 切换标签回调 |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| variant | enum | default | 标签栏样式：`default`（默认）/ `segmented`（分段）/ `pill`（药丸） |
 
-继承 `_style`。
+### 事件
+
+无。
+
+### 子组件
+
+支持 `TabItem` 子组件。
+
+### 示例
+
+**AE 语法：**
+
+```ae
+TabBar(variant="default") {
+    TabItem(title="首页" icon="house") {
+        HomeView()
+    }
+    TabItem(title="设置" icon="gear") {
+        SettingsView()
+    }
+}
+```
+
+**SwiftUI 输出：**
+
+```swift
+TabView(selection: viewModel.selectedTabIndex) {
+    HomeView()
+        .tabItem {
+            Label("首页", systemImage: "house")
+        }
+        .tag(0)
+    SettingsView()
+        .tabItem {
+            Label("设置", systemImage: "gear")
+        }
+        .tag(1)
+}
+.tabViewStyle(.automatic)
+```
 
 ---
 
