@@ -605,7 +605,7 @@ AsyncImage(src=$assets.photo placeholder=$assets.placeholder).w(200).h(150).radi
 
 ## Canvas
 
-自定义绘制画布组件。
+自定义绘制画布组件，通过 `onRender` 绑定 Rust 逻辑层的渲染函数，实现动态绘制。
 
 ### 属性
 
@@ -613,9 +613,35 @@ AsyncImage(src=$assets.photo placeholder=$assets.placeholder).w(200).h(150).radi
 |------|------|--------|------|
 | drawsContent | bool | false | 是否绘制内容 |
 | dirtyRect | str | — | 脏区域矩形描述 |
+| onRender | callback | — | 渲染回调，绑定返回 DisplayList JSON 的 Rust 方法 |
 
 ### 示例
+
+**基本用法：**
 
 ```ae
 Canvas(drawsContent=true).w(300).h(200)
 ```
+
+**绑定 Rust 渲染函数：**
+
+```ae
+Canvas(onRender={Home.get_commands}).w(100%).h(400)
+```
+
+```swift
+Canvas { context, size in
+    let displayList = CanvasRenderer.shared.getDisplayList()
+    for item in displayList {
+        // 根据 DrawItem type 渲染 text/rect/path/circle/line
+    }
+}
+.onAppear { CanvasRenderer.shared.render(viewModel.logic.getCommands()) }
+```
+
+### 渲染流程
+
+1. `.ae` 中 `onRender={Home.get_commands}` 绑定 Rust 方法
+2. Canvas `onAppear` 时调用 `CanvasRenderer.shared.render(viewModel.logic.getCommands())`
+3. Rust `get_commands()` 返回 DisplayList JSON 字符串
+4. `CanvasRenderer` 解析 JSON，SwiftUI Canvas 闭包遍历 DrawItem 逐项绘制

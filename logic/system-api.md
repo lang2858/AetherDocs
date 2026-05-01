@@ -312,6 +312,9 @@ sys_dialog_hide()
 | `sys_canvas_invalidate_all` | `()` | 重绘所有画布 |
 | `sys_canvas_set_render_mode` | `(id: String, mode: String)` | 设置渲染模式 |
 | `sys_canvas_flush` | `(id: String)` | 刷新画布 |
+| `sys_canvas_render` | `(commands: String)` | 提交 DisplayList JSON 到 CanvasRenderer |
+
+`sys_canvas_render` 在 `display_list_render()` 内部自动调用，将序列化后的 DrawItem 数组推送到 Swift 侧 `CanvasRenderer`，触发 Canvas 重绘。
 
 ## 地图（Map）
 

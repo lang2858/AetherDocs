@@ -371,3 +371,86 @@ impl Home {
 - `func getFileCount() -> UInt32` → getter
 - `func onClick()` → 调 Rust + refresh
 - `func setProjectDir(dir: String)` → 调 Rust + refresh
+
+---
+
+## 10. Canvas 绘制（DisplayList）
+
+Canvas 组件通过 `onRender` 属性绑定 Rust 方法，Rust 返回 DisplayList JSON 驱动 SwiftUI Canvas 绘制。
+
+### DrawItem 类型
+
+```rust
+pub(crate) enum DrawItem {
+    Text   { x: f64, y: f64, text: String, font: String, size: f64, color: String, rotation: f64 },
+    Rect   { x: f64, y: f64, w: f64, h: f64, fill: Option<String>, border: Option<String>, border_width: f64, radius: f64, rotation: f64 },
+    Path   { points: Vec<Vec<f64>>, color: String, width: f64, fill: Option<String> },
+    Circle { cx: f64, cy: f64, r: f64, color: String, width: f64, fill: Option<String> },
+    Line   { x1: f64, y1: f64, x2: f64, y2: f64, color: String, width: f64 },
+}
+```
+
+### DisplayList API
+
+```rust
+use crate::canvas::{DisplayList, display_list_new, display_list_extend, display_list_render};
+
+let mut list = display_list_new();
+display_list_extend(&mut list, vec![DrawItem::Text { /* ... */ }]);
+let json = display_list_render(&list); // 序列化 + 调用 sys_canvas_render
+```
+
+| 函数 | 签名 | 说明 |
+|------|------|------|
+| `display_list_new` | `() -> DisplayList` | 创建空 DisplayList |
+| `display_list_push` | `(&mut DisplayList, DrawItem)` | 追加单个绘制项 |
+| `display_list_extend` | `(&mut DisplayList, Vec<DrawItem>)` | 批量追加绘制项 |
+| `display_list_clear` | `(&mut DisplayList)` | 清空 |
+| `display_list_render` | `(&DisplayList) -> String` | 序列化为 JSON 并推送到 CanvasRenderer |
+
+### Block 高级抽象
+
+Block 是 DrawItem 之上的语义层，将内容块（文字、AI 回复、代码、涂鸦）渲染为一组 DrawItem：
+
+```rust
+use crate::block::{Block, BlockType, BlockContent, SketchPath, Markup, block_render_items, markup_render_items};
+
+let block = Block {
+    id: "b1".to_string(),
+    block_type: BlockType::Text,
+    x: 40.0, y: 60.0, width: 300.0, collapsed: false,
+    content: BlockContent::Text {
+        text: "标题".to_string(), font: "AetherHand".to_string(), size: 18.0, color: "#3C3C3C".to_string(),
+    },
+};
+display_list_extend(&mut list, block_render_items(&block));
+```
+
+| BlockType | BlockContent | 说明 |
+|-----------|-------------|------|
+| `Text` | `Text { text, font, size, color }` | 文字块，暖色背景 |
+| `AiReply` | `AiReply { text, font, size, color }` | AI 回复块，蓝色背景 |
+| `Code` | `Code { code, language, summary }` | 代码块，深色背景，支持 collapsed |
+| `Sketch` | `Sketch { paths, background }` | 涂鸦块，自由路径 |
+
+Markup 是轻量标注，渲染为 DrawItem 的 Circle/Line/Text：
+
+```rust
+let markup = Markup::Circle { cx: 190.0, cy: 80.0, r: 50.0 };
+display_list_extend(&mut list, markup_render_items(&markup));
+```
+
+| Markup 变体 | 说明 |
+|------------|------|
+| `Circle { cx, cy, r }` | 红色圆圈标注 |
+| `Arrow { x1, y1, x2, y2 }` | 红色箭头线 |
+| `Cross { cx, cy, size }` | 红色叉号 |
+| `Note { x, y, text }` | 红色手写批注 |
+
+### .ae 绑定
+
+```ae
+Canvas(onRender={Home.get_commands}).w(100%).h(400)
+```
+
+Rust 侧 `get_commands` 方法返回 `String`（DisplayList JSON），Canvas `onAppear` 时自动调用。
