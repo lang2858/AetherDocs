@@ -38,8 +38,14 @@ export default defineConfig({
       ],
       '/logic/': [
         { text: 'Logic 层概览', link: '/logic/overview' },
+        { text: 'Rust 代码编写', link: '/logic/writing-rust' },
+        { text: '状态同步机制', link: '/logic/state-sync' },
         { text: '状态绑定', link: '/logic/state-binding' },
+        { text: '.ae 绑定语法', link: '/logic/binding' },
+        { text: '跨模块引用', link: '/logic/cross-module' },
+        { text: '原生库桥接', link: '/logic/native-bridge' },
         { text: '系统 API', link: '/logic/system-api' },
+        { text: '常见问题', link: '/logic/faq' },
       ],
       '/theming/': [
         { text: '主题系统', link: '/theming/theme' },
