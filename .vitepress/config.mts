@@ -22,6 +22,7 @@ export default defineConfig({
         { text: '配置参考', link: '/guide/config' },
       ],
       '/ae/': [
+        { text: '响应式布局', link: '/ae/responsive' },
         { text: '语法基础', link: '/ae/syntax' },
         { text: '布局组件', link: '/ae/layout' },
         { text: '显示组件', link: '/ae/display' },

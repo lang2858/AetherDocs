@@ -20,6 +20,8 @@ hero:
       link: https://github.com/lang2858/AetherDocs
 
 features:
+  - title: 响应式布局
+    details: 三层渐进式响应式 — Flex Wrap 自动换行、自适应 Grid、断点系统，声明即响应
   - title: AI-Friendly
     details: 声明即实现，零样板代码 — AI 只需输出 AE 描述
   - title: 自动绑定
