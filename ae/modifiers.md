@@ -378,6 +378,59 @@ Button(action: { viewModel.create() }) {
 
 ---
 
+## 交互修饰符
+
+| AE 修饰符 | SwiftUI 映射 | 说明 |
+|-----------|-------------|------|
+| `.click(action=method)` | `.onTapGesture { editorManager.method() }` | 点击触发动作 |
+| `.click(action=TypeName.method)` | 路由到对应目标（见下方详细说明） | 点击触发带类型前缀的动作 |
+
+### .click() 修饰符
+
+`.click()` 为任意视图添加点击手势，生成 SwiftUI 的 `.onTapGesture`。支持三种路由语法：
+
+| AE 语法 | 条件 | 生成的 Swift 代码 | 说明 |
+|---------|------|-------------------|------|
+| `.click(action=setActiveFile)` | 无类型前缀 | `editorManager.setActiveFile()` | 路由到当前页面默认 Manager |
+| `.click(action=Editor.setActiveFile)` | `Editor` 有 StateManager | `editorManager.setActiveFile()` | 路由到 StateManager |
+| `.click(action=Home.on_click)` | `Home` 无 StateManager | `viewModel.logic.onClick()` | 路由到 Logic 层方法 |
+
+**无类型前缀**时，`click` 路由到页面默认的 `editorManager`（向后兼容行为）。**带类型前缀**时，若该类型有 StateManager（如 `EditorStateManager`），则路由到对应 Manager 变量；否则路由到 ViewModel 的 Logic 层。
+
+### 基本示例
+
+```ae
+Text("删除").click(action=delete_item)
+```
+
+```swift
+Text("删除").onTapGesture { editorManager.deleteItem() }
+```
+
+### StateManager 路由示例
+
+```ae
+// Editor 类型有 EditorStateManager
+Text("打开文件").click(action=Editor.open_file)
+```
+
+```swift
+Text("打开文件").onTapGesture { editorManager.openFile() }
+```
+
+### Logic 层路由示例
+
+```ae
+// Home 类型无 StateManager，路由到 Logic 层
+Button("刷新").click(action=Home.refresh_data)
+```
+
+```swift
+Button(action: { viewModel.logic.refreshData() }) { Text("刷新") }.fixedSize()
+```
+
+---
+
 ## _style 全局样式属性
 
 所有组件均支持以下全局样式属性，可通过点修饰符统一设置：

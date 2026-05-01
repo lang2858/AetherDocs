@@ -86,9 +86,59 @@ view Home {
 
 使用 `{$binding}` 语法实现双向绑定：
 
+### 页面级状态绑定
+
 ```ae
-TextField(text={$search_query})
+TextField(value={$search_query})
 ```
 
-- 输入变化自动更新 `$search_query` 状态
+- 输入变化自动更新 ViewModel 的 `$search_query` 状态
 - 状态变化自动反映到 UI
+
+### StateManager 状态绑定
+
+当绑定的类型有 StateManager 时，双向绑定会路由到对应 Manager：
+
+```ae
+TextField(value={Editor.file_content} placeholder="输入代码...")
+```
+
+- `Editor` 类型 → 查找 `EditorStateManager` → 生成 `editorManager.$file_content`
+- 输入变化自动更新 `EditorStateManager.fileContent`
+- StateManager 的 `@Published` 属性变化自动反映到 UI
+
+生成的 Swift 代码：
+
+```swift
+TextField("输入代码...", text: editorManager.$fileContent)
+```
+
+无 StateManager 的类型（如 `Home`）则路由到 ViewModel：
+
+```ae
+TextField(value={Home.search_query})
+```
+
+```swift
+TextField("", text: viewModel.$searchQuery)
+```
+
+---
+
+## 交互路由 (.click)
+
+`.click()` 修饰符支持类型前缀路由，自动分发到 StateManager 或 Logic 层：
+
+| AE 语法 | 路由目标 | 生成的 Swift 代码 |
+|---------|---------|-------------------|
+| `.click(action=open_file)` | 默认 Manager | `editorManager.openFile()` |
+| `.click(action=Editor.open_file)` | StateManager | `editorManager.openFile()` |
+| `.click(action=Home.refresh)` | Logic 层 | `viewModel.logic.refresh()` |
+
+```ae
+Text("打开文件").click(action=Editor.open_file)
+```
+
+```swift
+Text("打开文件").onTapGesture { editorManager.openFile() }
+```
