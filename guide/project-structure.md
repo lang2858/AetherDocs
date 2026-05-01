@@ -26,6 +26,9 @@ myapp/
       en.toml                 # 英文翻译
     assets/
       *.svg                   # SVG 图标资源（支持子目录）
+      fonts/                  # 自定义字体目录（可选）
+        *.ttf                 # TrueType 字体文件
+        *.otf                 # OpenType 字体文件
 ```
 
 ## 核心约定
@@ -155,3 +158,18 @@ VStack(spacing=0) {
 ### assets/ -- 静态资源
 
 目前支持 `.svg` 格式的图标资源，支持子目录组织。在 `.ae` 文件中通过 `$assets.icon_name` 引用。子目录使用 `.` 分隔，例如 `assets/tab/home.svg` 对应 `$assets.tab.home`。
+
+#### 自定义字体
+
+将 `.ttf` 或 `.otf` 字体文件放入 `src/assets/fonts/` 目录，框架会自动：
+1. 复制字体文件到 Xcode 项目的 App Target 目录
+2. 在 `Info.plist` 中注册字体路径（`ATSApplicationFontsPath`）
+3. 在 Xcode 项目文件中添加字体文件引用
+
+在 `.ae` 文件中使用 `.font("FontName:size")` 修饰符应用自定义字体：
+
+```ae
+Text("手写笔记").font("RYYCSXT:18").color($colors.text)
+```
+
+其中 `FontName` 是字体的 **PostScript 名称**（可通过 `fc-scan` 或 Font Book 查看）。

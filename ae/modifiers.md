@@ -108,6 +108,7 @@ HStack { ... }.w(auto)
 |-----------|-------------|------|
 | `.bg("#hex")` | `.background(Color(hex: "#hex"))` | `.bg("#121622")` |
 | `.bg($colors.token)` | `.background(AppColors.token)` | `.bg($colors.primary)` |
+| `.bg($assets.xxx, "tile")` | `.background(ImagePaint(image: Image("xxx")))` | `.bg($assets.paper_lines, "tile")` |
 | `.color("#hex")` | `.foregroundColor(Color(hex: "#hex"))` | `.color("#8A90A2")` |
 | `.color($colors.token)` | `.foregroundColor(AppColors.token)` | `.color($colors.text)` |
 | `.radius(N)` | `.cornerRadius(N)` | `.radius(8)` |
@@ -117,6 +118,8 @@ HStack { ... }.w(auto)
 | `.tintColor($colors.token)` | `.foregroundColor(AppColors.token)` (renderingMode: .template) | `.tintColor($colors.primary)` |
 | `.mode("contain")` | `.aspectRatio(contentMode: .fit)` | `.mode("contain")` |
 | `.mode("cover")` | `.aspectRatio(contentMode: .fill)` | `.mode("cover")` |
+| `.rotation(N)` | `.rotationEffect(.degrees(N))` | `.rotation(0.8)` |
+| `.font("Name:size")` | `.font(.custom("Name", size: N))` | `.font("RYYCSXT:18")` |
 
 ### 背景色示例
 
@@ -166,6 +169,46 @@ Text("已禁用").op(0.4)
 
 ```swift
 Text("已禁用").opacity(0.4)
+```
+
+### 平铺背景示例
+
+使用 `.bg($assets.xxx, "tile")` 可以平铺图片作为背景，常用于纸张纹理、图案等：
+
+```ae
+ScrollView(.vertical) {
+    VStack { ... }
+}
+.bg($assets.paper_lines, "tile")
+```
+
+```swift
+ScrollView(.vertical, showsIndicators: true) {
+    VStack { ... }
+}
+.background(ImagePaint(image: Image("paper_lines")))
+```
+
+### 旋转示例
+
+```ae
+VStack { ... }.rotation(0.8)
+```
+
+```swift
+VStack { ... }.rotationEffect(.degrees(0.8))
+```
+
+### 自定义字体示例
+
+将字体文件放入 `src/assets/fonts/` 目录，框架会自动复制到 Xcode 项目并注册：
+
+```ae
+Text("手写笔记").font("RYYCSXT:18").color($colors.text)
+```
+
+```swift
+Text("手写笔记").font(.custom("RYYCSXT", size: 18)).foregroundColor(AppColors.text)
 ```
 
 ---
@@ -393,8 +436,9 @@ AE 编译器将修饰符按以下固定顺序输出（从内到外包裹）：
 | 8 | `font_weight` | 字重 |
 | 9 | `font_italic` | 斜体 |
 | 10 | `color` | 前景色 |
-| 11 | `flexGrow` | 弹性增长 |
-| 12 | `justify_frame` | 对齐帧 |
+| 11 | `rotation` | 旋转 |
+| 12 | `flexGrow` | 弹性增长 |
+| 13 | `justify_frame` | 对齐帧 |
 
 这意味着无论你如何书写修饰符，生成的 SwiftUI 代码始终遵循这个顺序。例如：
 

@@ -116,13 +116,19 @@ aether build --project myapp --platform macos --release
 
 ## 转译项目（仅生成代码，不编译）
 
-如果只需要生成 UniFFI crate 和 SwiftUI 代码，不执行编译：
+如果只需要生成 UniFFI crate 和平台代码，不执行编译：
 
 ```bash
-aether trans --project myapp
+aether trans --project myapp --platform macos
 ```
 
-输出目录默认为项目下的 `gen/swiftui/`。
+输出目录默认为项目下的 `gen/macos/`。
+
+使用 `--platform` 参数指定目标平台（默认为当前系统平台）：
+
+```bash
+aether trans --project myapp --platform iphone
+```
 
 ## 运行应用
 
@@ -195,13 +201,16 @@ aether build [--project <dir>] [--platform <platform>] [--release]
 
 ### aether trans
 
-转译 Aether 项目，生成 UniFFI crate 和 SwiftUI 代码（不执行编译）。
+转译 Aether 项目，生成 UniFFI crate 和平台代码（不执行编译）。
 
 ```bash
-aether trans [--project <dir>] [--build-dir <dir>]
+aether trans [--project <dir>] [--build-dir <dir>] [--platform <platform>]
 ```
 
 | 参数 | 说明 |
 |------|------|
 | `--project <dir>` | 项目路径，默认为当前目录 `.` |
 | `--build-dir <dir>` | 构建输出路径，默认为项目下的 `gen` |
+| `--platform <platform>` | 目标平台，默认为当前系统平台 |
+
+可用的 platform 值：`macos`、`iphone`、`ipad`
