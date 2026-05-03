@@ -26,6 +26,29 @@ component ComponentName(param1, param2, param3="default_value") {
 |------|------|------|
 | 无默认值 | `name` | `icon`, `label`, `onClick` |
 | 有默认值 | `name=value` | `width=220`, `color="$colors.primary"` |
+| 类型标注 | `name: Type` | `active: Bool`, `count: Int` |
+
+参数类型支持 `String`、`Bool`、`Int`、`Double` 等 Swift 类型。`Bool` 类型参数在调用时使用 `true`/`false` 字面量。
+
+```ae
+component BoardItem(title: String, icon: String, active: Bool) {
+    HStack(spacing=8) {
+        Icon(name=$icon size=14 color=$colors.text_secondary)
+        Text($title).size(13).color($colors.text)
+        Spacer()
+    }
+    .pad(left=8, right=8, top=6, bottom=6)
+    .bg($colors.paper_bg, active=$active)
+    .radius(6)
+}
+```
+
+调用时：
+
+```ae
+:BoardItem(title="产品设计" icon="lightbulb" active=true)
+:BoardItem(title="技术笔记" icon="gearshape" active=false)
+```
 
 字符串默认值在定义时需要用引号包裹，解析后自动去除引号存储。
 

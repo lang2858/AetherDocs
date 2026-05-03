@@ -370,6 +370,59 @@ sys_dialog_hide()
 | `sys_screen_keep_awake` | `(enabled: bool)` | 保持屏幕常亮 |
 | `sys_screen_set_orientation` | `(orientation: String)` | 设置屏幕方向 |
 
+## 光标（Cursor）
+
+PC 平台（macOS/Windows）光标管理。用于在 Rust 逻辑层控制鼠标光标样式，适用于画板、编辑器等需要根据工具状态切换光标的场景。
+
+| 函数 | 签名 | 说明 |
+|---|---|---|
+| `sys_cursor_set` | `(name: String)` | 设置光标样式 |
+| `sys_cursor_reset` | `()` | 恢复默认光标（箭头） |
+
+### 支持的光标名称
+
+| 名称 | 说明 | macOS 对应 |
+|---|---|---|
+| `arrow` | 默认箭头 | `NSCursor.arrow` |
+| `crosshair` | 十字准星 | `NSCursor.crosshair` |
+| `pointingHand` / `hand` | 手型（可点击） | `NSCursor.pointingHand` |
+| `iBeam` / `text` | 文本输入 I 型 | `NSCursor.iBeam` |
+| `resizeLeftRight` / `resizeHorizontal` | 水平调整大小 | `NSCursor.resizeLeftRight` |
+| `resizeUpDown` / `resizeVertical` | 垂直调整大小 | `NSCursor.resizeUpDown` |
+| `closedHand` / `grabbing` | 抓取中 | `NSCursor.closedHand` |
+| `openHand` / `grab` | 可抓取 | `NSCursor.openHand` |
+| `disappearingItem` | 消失项 | `NSCursor.disappearingItem` |
+| `operationNotAllowed` / `forbidden` | 禁止操作 | `NSCursor.operationNotAllowed` |
+| `dragCopy` | 拖拽复制 | `NSCursor.dragCopy` |
+| `dragLink` | 拖拽链接 | `NSCursor.dragLink` |
+| `contextMenu` | 上下文菜单 | `NSCursor.contextMenu` |
+
+### Rust 调用示例
+
+```rust
+// 画笔工具 → 十字准星
+sys_cursor_set("crosshair".to_string());
+
+// 文本工具 → I 型光标
+sys_cursor_set("iBeam".to_string());
+
+// 退出工具模式 → 恢复默认
+sys_cursor_reset();
+```
+
+### 在 Canvas 中的自动光标
+
+Canvas 组件内置了工具光标映射，当 `CanvasState.currentTool` 变化时自动切换：
+
+| 工具 | 光标 |
+|---|---|
+| `pen` | `crosshair` |
+| `eraser` | `pointingHand` |
+| `note` | `iBeam` |
+| 其他 | `crosshair` |
+
+如需自定义光标行为，可在 Rust 逻辑中调用 `sys_cursor_set()` 覆盖。
+
 ## 撤销/重做（Undo/Redo）
 
 | 函数 | 签名 | 说明 |

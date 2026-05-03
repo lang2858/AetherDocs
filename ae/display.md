@@ -190,6 +190,35 @@ Image(icon).frame(width: 24, height: 24)
 |------|------|
 | onTap | 点击图标时触发 |
 
+### 选中状态高亮
+
+当 `onTap` 设置 `canvasState.currentTool = .xxx` 时，Icon 自动生成条件颜色：选中时显示 accent 颜色，未选中显示原始颜色。
+
+```ae
+Icon(name="circle" size=20 color=$colors.circle_red onTap={canvasState.currentTool = .circle})
+```
+
+```swift
+Image(systemName: "circle")
+    .font(.system(size: 20))
+    .foregroundColor((CanvasState.shared.currentTool == AeTool.circle ? AppColors.accent : AppColors.circle_red))
+    .onTapGesture { CanvasState.shared.currentTool = .circle }
+```
+
+当 `onTap` 设置 `canvasState.strokeColor = AppColors.xxx` 时，Icon 自动生成选中环：选中颜色显示描边环，未选中透明。
+
+```ae
+Icon(name="circle.fill" size=14 color=$colors.circle_red onTap={canvasState.strokeColor = AppColors.circle_red})
+```
+
+```swift
+Image(systemName: "circle.fill")
+    .font(.system(size: 14))
+    .foregroundColor(AppColors.circle_red)
+    .onTapGesture { CanvasState.shared.strokeColor = AppColors.circle_red }
+    .overlay(Circle().stroke(CanvasState.shared.strokeColor == AppColors.circle_red ? AppColors.text : Color.clear, lineWidth: 2).frame(width: 18, height: 18))
+```
+
 ### 示例
 
 **基本用法：**
@@ -214,6 +243,19 @@ Icon(name="star.fill" size=20 color=$colors.primary)
 Image(systemName: "star.fill")
     .font(.system(size: 20))
     .foregroundColor(AppColors.primary)
+```
+
+**带 onTap 交互：**
+
+```ae
+Icon(name="trash" size=16 color=$colors.text_secondary onTap={canvasState.clearAll()})
+```
+
+```swift
+Image(systemName: "trash")
+    .font(.system(size: 16))
+    .foregroundColor(AppColors.text_secondary)
+    .onTapGesture { CanvasState.shared.clearAll() }
 ```
 
 ---
@@ -615,6 +657,29 @@ AsyncImage(src=$assets.photo placeholder=$assets.placeholder).w(200).h(150).radi
 | dirtyRect | str | — | 脏区域矩形描述 |
 | onRender | callback | — | 渲染回调，绑定返回 DisplayList JSON 的 Rust 方法 |
 
+### Canvas 背景渲染
+
+Canvas 自动渲染草稿纸背景（Layer 0），包含：
+- `paper_bg` 颜色填充整个画布区域
+- 淡色水平线（间距 28pt），模拟草稿纸纹理
+- 点阵网格（间距 28pt），增强草稿纸质感
+- 背景随 pan/zoom 变换同步移动
+
+### CanvasState 单例
+
+Canvas 通过 `CanvasState.shared` 单例管理交互状态，可在任何视图中直接访问：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| currentTool | AeTool | 当前工具：circle / arrow / cross / note / pen / eraser |
+| strokeColor | Color | 笔画颜色 |
+| strokeWidth | CGFloat | 笔画粗细 |
+| strokes | [Stroke] | 已完成笔画列表 |
+| annotations | [Annotation] | 批注列表 |
+| zoomLevel | CGFloat | 缩放级别 |
+| zoomPercent | String | 缩放百分比文本（如 "100%"） |
+| panOffset | CGSize | 平移偏移 |
+
 ### 示例
 
 **基本用法：**
@@ -639,9 +704,18 @@ Canvas { context, size in
 .onAppear { CanvasRenderer.shared.render(viewModel.logic.getCommands()) }
 ```
 
+**InputBar 工具选择：**
+
+```ae
+Icon(name="circle" size=20 color=$colors.circle_red onTap={canvasState.currentTool = .circle})
+Icon(name="circle.fill" size=14 color=$colors.circle_red onTap={canvasState.strokeColor = AppColors.circle_red})
+Icon(name="circle.fill" size=6 color=$colors.text_secondary onTap={canvasState.strokeWidth = 1.5})
+```
+
 ### 渲染流程
 
 1. `.ae` 中 `onRender={Home.get_commands}` 绑定 Rust 方法
 2. Canvas `onAppear` 时调用 `CanvasRenderer.shared.render(viewModel.logic.getCommands())`
 3. Rust `get_commands()` 返回 DisplayList JSON 字符串
 4. `CanvasRenderer` 解析 JSON，SwiftUI Canvas 闭包遍历 DrawItem 逐项绘制
+5. Layer 0 自动绘制草稿纸背景（paper_bg + 水平线 + 点阵网格）

@@ -142,3 +142,44 @@ Text("打开文件").click(action=Editor.open_file)
 ```swift
 Text("打开文件").onTapGesture { editorManager.openFile() }
 ```
+
+---
+
+## CanvasState 单例绑定
+
+Canvas 交互状态通过 `CanvasState.shared` 单例管理，可在 AE 中通过 `{canvasState.xxx}` 语法直接访问。
+
+### 绑定类型
+
+| AE 绑定 | 生成 Swift 代码 | 说明 |
+|---------|----------------|------|
+| `{canvasState.currentTool = .circle}` | `CanvasState.shared.currentTool = .circle` | 设置当前工具 |
+| `{canvasState.strokeColor = AppColors.xxx}` | `CanvasState.shared.strokeColor = AppColors.xxx` | 设置笔画颜色 |
+| `{canvasState.strokeWidth = 2.5}` | `CanvasState.shared.strokeWidth = 2.5` | 设置笔画粗细 |
+| `{canvasState.clearAll()}` | `CanvasState.shared.clearAll()` | 清除所有批注 |
+
+### 选中状态高亮
+
+当 Icon 的 `onTap` 设置 `canvasState.currentTool = .xxx` 时，codegen 自动生成条件颜色：
+
+```ae
+Icon(name="circle" size=20 color=$colors.circle_red onTap={canvasState.currentTool = .circle})
+```
+
+```swift
+Image(systemName: "circle")
+    .font(.system(size: 20))
+    .foregroundColor((CanvasState.shared.currentTool == AeTool.circle ? AppColors.accent : AppColors.circle_red))
+    .onTapGesture { CanvasState.shared.currentTool = .circle }
+```
+
+### 注册机制
+
+CanvasState 在 `lifecycle.rs` 中通过 `state_manager_names` HashMap 注册：
+
+```rust
+// "canvasState" → "CanvasState" 映射
+state_manager_names.insert("canvasState".to_string(), "CanvasState".to_string());
+```
+
+`replace_state_manager_bindings` 函数处理 `{canvasState.xxx}` 绑定，替换为 `CanvasState.shared.xxx`。
