@@ -272,6 +272,7 @@ ScrollView(.horizontal, showsIndicators: false) {
 | minSecond | num | — | 第二个面板的最小尺寸（pt） |
 | collapsibleFirst | bool | false | 第一个面板是否可折叠 |
 | collapsibleSecond | bool | false | 第二个面板是否可折叠 |
+| secondCollapsed | binding | — | 绑定控制第二个面板是否折叠，如 `{EditorState.right_panel_collapsed}` |
 
 ### 事件
 
