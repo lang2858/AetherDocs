@@ -25,7 +25,8 @@ Aether 的状态同步基于 **Rust ↔ Swift 双向通信**架构。Swift 通�
 | Action 方法 | 调 Rust + `refreshFromRust()` | Rust `&mut self` 方法 |
 | refreshFromRust | 读所有 getter 同步 @Published | 所有 getter 方法 |
 | refreshFields | 增量刷新指定属性 | 推送通知时使用 |
-| Observer 类 | 符合 callback_interface 的通知接收者 | 推送通知机制 |
+| subscribeObserver | 总是生成；有 delegate 时注册 Observer，无 delegate 时为空方法 | 自动订阅 |
+| Observer 类 | 符合 callback_interface 的通知接收者 | 仅类型有 StateChangeDelegate 时生成 |
 
 ### 1.3 Manager 类结构示例
 
@@ -264,11 +265,21 @@ class EditorStateObserver: EditorStateStateChangeDelegate {
 
 ### 4.4 使用方式
 
-**Swift 侧订阅**（在 View 的 `onAppear` 中）：
+**自动订阅**：App 入口 `.onAppear` 中自动为所有 StateManager 调用 `subscribeObserver()`，无需手动添加。
 
 ```swift
-editorManager.subscribeObserver()
+// 自动生成的 App 入口
+.onAppear {
+    HomeManager.shared.subscribeObserver()
+    EditorStateManager.shared.subscribeObserver()
+    ConsoleManager.shared.subscribeObserver()
+    // ... 所有 state_manager_names 中的类型
+}
 ```
+
+**有 StateChangeDelegate 的类型**：`subscribeObserver()` 注册真正的 Observer，接收推送通知。
+
+**无 StateChangeDelegate 的类型**：`subscribeObserver()` 是空方法（no-op），保证框架层面 API 统一。
 
 **Rust 侧推送**（在异步操作完成后）：
 
