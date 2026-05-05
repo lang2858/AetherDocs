@@ -192,6 +192,14 @@ force_exclude = ["Video"]      # 强制排除（即使扫描检测到）
 
 核心能力（`SystemUI`、`Navigation`、`Theme`、`I18n`）始终包含，无需手动配置。
 
+部分能力会在 Xcode 项目的 `SWIFT_ACTIVE_CONDITIONS` 中设置对应的条件编译标志，控制 AetherRuntime 中 `#if AETHER_*` 代码段的编译：
+
+| 能力 | 条件编译标志 | 控制的 AetherRuntime 代码 |
+|------|-------------|-------------------------|
+| `Storage` | `AETHER_STORAGE` | StorageDelegateImpl、AetherBridge.registerStorageDelegate() |
+| `FilePicker` | `AETHER_FILE_PICKER` | FilePickerDelegateImpl、AetherBridge.registerFilePickerDelegate() |
+| `Drawer` | `AETHER_DRAWER` | DrawerDelegateImpl、AetherBridge.registerDrawerDelegate() |
+
 ### [theme]
 
 主题配置。

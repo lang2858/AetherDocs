@@ -79,26 +79,58 @@ aether.toml + .ae + .rs + themes + i18n + assets
 
 ### 9. 生成资源 Swift 文件（按能力过滤）
 
-基于加载的资源，生成一系列 Swift 管理类，包括：
+基于加载的资源，生成一系列 Swift 管理类。其中 **AetherRuntime 静态文件** 已包含通用实现，通过 `#if AETHER_*` 条件编译标志按能力激活，不需要按应用生成。
+
+#### Codegen 生成的文件
 
 | 文件 | 说明 |
 |------|------|
-| `ThemeManager.swift` | 主题管理，颜色/字体/间距常量 |
-| `I18nManager.swift` | 国际化文本管理 |
-| `AppAssets.swift` | SVG 图标资源引用 |
-| `SystemUI.swift` | 系统级 UI 能力（Toast、Dialog） |
-| `Navigation.swift` | 导航路由管理 |
-| `Storage.swift` | 本地存储 |
-| `Device.swift` | 设备信息 |
-| `Platform.swift` | 平台检测 |
+| `ThemeManager.swift` | 主题管理，颜色/字体/间距常量（按主题配置生成） |
+| `I18nManager.swift` | 国际化文本管理（按翻译表生成） |
+| `AppAssets.swift` | SVG 图标资源引用（按资源清单生成） |
+| `Keyboard.swift` | KeyboardMonitor 扩展（仅当 `Keyboard` 能力激活时生成） |
+
+#### AetherRuntime 静态文件（`#if AETHER_*` 条件编译）
+
+| 文件 | 条件标志 | 说明 |
+|------|---------|------|
+| `AetherBridge.swift` | — | 委托注册中心，`registerAll()` 内部按 `#if` 分发 |
+| `DelegateBridge.swift` | `AETHER_STORAGE`, `AETHER_FILE_PICKER` | Category C 委托实现（StorageDelegateImpl、FilePickerDelegateImpl） |
+| `DrawerManager.swift` | `AETHER_DRAWER` | 抽屉状态管理 + DrawerDelegateImpl |
+| `StorageManager.swift` | — | UserDefaults 存储管理 |
+| `NavigationManager.swift` | — | 导航路由管理 |
+| `SystemUIManager.swift` | — | Toast/Dialog 管理 |
+| `ThemeManager.swift` (Runtime) | — | 运行时主题切换 |
+| `I18nManager.swift` (Runtime) | — | 运行时语言切换 |
+| `DeviceManager.swift` | — | 设备信息 |
+| `KeyboardMonitor.swift` | — | 键盘事件监听基类 |
+| `ToolbarHelper.swift` | `os(macOS)` | macOS 工具栏辅助（ToolbarButtonCenterizer、WindowAccessor） |
+
+条件编译标志通过 Xcode 项目的 `SWIFT_ACTIVE_CONDITIONS` 构建设置注入，在下一步（步骤 10）中根据能力检测结果自动配置。
+
+#### 三类委托架构
+
+Aether 的系统 API 按调用方向分为三类：
+
+| 类别 | 方向 | 机制 | 示例 |
+|------|------|------|------|
+| A (UI 自循环) | Rust → Swift | Rust stub 函数，Swift Manager 直接处理 | `sys_toast`, `sys_navigate`, `sys_dialog_show` |
+| B (平台事件) | Swift → Rust | Swift 调 `sys_on_*` 桥接函数通知 Rust | `sys_on_key_down`, `sys_on_orientation_change` |
+| C (双向回调) | 双向 | UniFFI `callback_interface` 生成 Swift protocol | `StorageDelegate`, `FilePickerDelegate`, `DrawerDelegate` |
+
+Category A 的 stub 函数始终生成（Rust 侧），Category C 的实现放在 AetherRuntime 中用 `#if` 条件编译控制。
 
 ### 10. 生成 Xcode 项目
 
-在构建输出目录生成 `.xcodeproj` 项目文件（含 `.pbxproj`、`project.yml`、scheme 等），将 UniFFI 绑定、资源 Swift 文件、SwiftUI 视图文件等组织到一个完整的 Xcode 项目中。所有源文件位于同一个 target 内，无需跨模块 `import`。
+在构建输出目录生成 `.xcodeproj` 项目文件（含 `.pbxproj`、`project.yml`、scheme 等），将 UniFFI 绑定、资源 Swift 文件、AetherRuntime 静态源码、SwiftUI 视图文件等组织到一个完整的 Xcode 项目中。所有源文件位于同一个 target 内，无需跨模块 `import`。
+
+根据能力检测结果，自动在 Xcode 项目的 `SWIFT_ACTIVE_CONDITIONS` 构建设置中添加对应的条件编译标志（如 `AETHER_STORAGE`、`AETHER_FILE_PICKER`、`AETHER_DRAWER`），控制 AetherRuntime 中 `#if AETHER_*` 代码段的编译。
 
 ### 11. 生成 SwiftUI 视图文件
 
 将每个 `.ae` 文件转换为对应的 SwiftUI 视图文件（`.swift`）。一个 `.ae` 文件生成一个 `.swift` 文件，组件 `.ae` 文件生成可复用的 SwiftUI 组件。
+
+当项目使用 `TextEditor(syntax="ae")` 时，框架层还会向 `Helpers.swift` 注入原生代码编辑器实现（`HighlightRule` + `AeTextView` + `AeCodeEditorView`），高亮规则数据从 `aether-lang` spec 自动提取并内嵌到 `AeTextView(...)` 参数中。这确保了代码编辑器的原生能力是跨平台共享的框架基础设施，具体高亮规则由 codegen 从 spec 数据生成。
 
 ### 11a. 诊断检查
 

@@ -210,6 +210,65 @@ TextArea(value={Feedback.content} placeholder="请输入反馈内容" rows=4 lab
 
 ---
 
+## TextEditor
+
+代码编辑器组件，支持 AE 语法高亮、行号显示和滚动同步。当 `syntax="ae"` 时，框架生成带语法高亮的原生代码编辑器视图（`AeTextView`），高亮规则从 `aether-lang` spec 数据自动注入。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | str | 必填 | 编辑内容绑定 |
+| placeholder | str | — | 占位提示文本 |
+| syntax | enum | — | 语法高亮模式：`ae`（AE DSL 语法高亮） |
+
+### 语法高亮
+
+当设置 `syntax="ae"` 时，TextEditor 从框架层生成原生代码编辑器，包含：
+
+- **行号显示** — 左侧 gutter 区域，滚动同步
+- **AE 关键词高亮** — `component`、`true`、`false`、`nil`（紫色）
+- **组件名称** — `VStack`、`HStack`、`Button` 等内置组件（蓝色）
+- **修饰符方法** — `.pad()`、`.bg()`、`.color()` 等点前缀修饰符（绿色）
+- **属性名** — `spacing=`、`align=` 等键值属性（橙色）
+- **枚举值** — `primary`、`vertical`、`bold` 等（浅紫色）
+- **自定义组件调用** — `:MyComponent(...)` 前缀调用（蓝色）
+- **状态绑定** — `{UpperIdent.ident}` 花括号引用（粉色）
+- **主题引用** — `$colors.xxx`、`$spacing.xxx`、`$assets.xxx`（青色）
+- **国际化引用** — `@i18n.section.key`（金色）
+- **字符串** — `"..."`（浅绿色）
+- **数字** — `12`、`0.5`（橙色）
+- **注释** — `// ...`（灰色，最高优先级覆盖所有）
+
+高亮规则从 `aether-lang` 的 `COMPONENT_SPECS` / `MODIFIER_SPECS` 自动提取，无需手写配置。
+
+### 示例
+
+**AE 语法编辑器：**
+
+```ae
+TextEditor(value={EditorState.active_content} syntax="ae").w(infinity).h(infinity)
+```
+
+生成 Swift：
+
+```swift
+AeTextView(
+    text: $editorManager.activeContent,
+    lineNumColor: NSColor(AppColors.text_secondary),
+    syntaxRules: [HighlightRule(tokens: [...], pattern: "word", color: ...), ...]
+)
+.frame(maxWidth: .infinity, maxHeight: .infinity)
+```
+
+**普通文本编辑器（无高亮）：**
+
+```ae
+TextEditor(value={Notes.content} placeholder="输入笔记")
+```
+
+---
+
 ## Toggle
 
 开关切换组件。
