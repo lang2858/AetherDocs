@@ -1,6 +1,6 @@
 # .ae 绑定语法
 
-`.ae` 文件中的绑定语法是 UI 与 Rust 逻辑层交互的核心接口。本文档详细说明 `{TypeName.field}` 数据绑定、`.click()` 事件分发、TextField 双向绑定的写法和规则。
+`.ae` 文件中的绑定语法是 UI 与 Rust 逻辑层交互的核心接口。本文档详细说明 `{TypeName.field}` 数据绑定、`onClick={Type.method()}` 事件分发、TextField 双向绑定的写法和规则。
 
 ---
 
@@ -11,13 +11,13 @@
 在 `.ae` 文件中，用 `{TypeName.field}` 语法读取 Rust 状态：
 
 ```ae
-Text("{Editor.activeContent}")
-Text("{Home.projectDir}")
+Text({Editor.activeContent})
+Text({Home.projectDir})
 ```
 
 **解析规则**：
 - `TypeName` — Rust struct 名称（如 `Editor`、`Home`、`EditorState`）
-- `field` — Swift Manager 上的 @Published 属性名（camelCase）
+- `field` — 对应 Rust 方法生成的属性名（camelCase）
 - `TypeName` 决定了数据来源：有 Manager 的类型从 Manager 读，当前页面逻辑类型从 ViewModel 读
 
 ### 1.2 类型路由
@@ -35,85 +35,48 @@ Text("{Home.projectDir}")
 
 | 位置 | 示例 | Swift 生成 |
 |------|------|-----------|
-| Text 内容 | `Text("{Editor.activeContent}")` | `Text(editorManager.activeContent)` |
-| 条件判断 | `if editorMode == "code"` | 直接引用 Manager 属性 |
-| 组件属性 | `visible="{Editor.hasErrors}"` | `.opacity(editorManager.hasErrors ? 1 : 0)` |
-| 列表数据源 | `ForEach("{Editor.openFiles}")` | `ForEach(editorManager.openFiles, id: \.self)` |
+| Text 内容 | `Text({Editor.activeContent})` | `Text(editorManager.activeContent)` |
+| 条件判断 | `If(condition={Editor.hasErrors})` | 直接引用 Manager 属性 |
+| 组件属性 | `visible={Editor.hasErrors}` | `.opacity(editorManager.hasErrors ? 1 : 0)` |
+| 列表数据源 | `ForEach(items={Editor.openFiles})` | `ForEach(editorManager.openFiles, id: \.self)` |
 
 ---
 
-## 2. `.click()` 事件分发
+## 2. 事件绑定 `onXxx={TypeName.method()}`
 
 ### 2.1 语法格式
 
+事件绑定使用花括号包裹的 Rust 方法调用：
+
 ```ae
-.click(action=methodName)
-.click(action=TypeName.methodName)
+Button("点击" onClick={Home.on_click()})
+View(onTap={Detail.show_menu()})
+Toggle(value={Settings.dark_mode} onChange={Settings.toggle_dark()})
 ```
 
 ### 2.2 分发规则
 
-`.click()` 的 `action` 参数支持三种写法，按优先级匹配：
+花括号内 `TypeName.method()` 的 `TypeName` 决定路由目标：
 
-#### 格式一：`TypeName.method`（推荐 — 显式指定目标）
+| TypeName 匹配 | Swift 生成 | 说明 |
+|---------------|-----------|------|
+| 有 Manager 的类型 | `editorManager.onClick()` | 路由到对应 Manager |
+| 当前页面 logic 类型 | `viewModel.logic.onClick()` | 路由到 ViewModel |
+| 未匹配 | 验证报错 (E020) | 绑定无效 |
 
-```ae
-.click(action=Editor.setActiveFile)
-.click(action=Home.on_click)
-.click(action=Settings.switch_theme)
-```
+### 2.3 带参数的 Action
 
-**匹配逻辑**（`resolve_click_action` 函数）：
-
-1. 遍历所有已知的状态类型（从 `rust_extractor` 提取的模块信息）
-2. 如果 `TypeName` 匹配某个状态类型，且该类型有 `methodName` 方法：
-   - 如果该类型有 Manager → 生成 `xxxManager.methodName()`
-   - 如果该类型是当前页面的 logic → 生成 `viewModel.logic.methodName()`
-3. 如果 `TypeName` 不匹配任何已知类型 → 回退到默认 editorManager
-
-#### 格式二：`methodName`（无前缀 — 向后兼容）
-
-```ae
-.click(action=setActiveFile)
-.click(action=openFile)
-```
-
-**匹配逻辑**：
-
-1. 查找 `methodName` 在哪个状态类型中存在
-2. 如果只在 EditorState 中找到 → `editorManager.methodName()`
-3. 如果在多个类型中找到 → 优先匹配 EditorState（向后兼容）
-4. 如果未找到 → 回退到 `editorManager.methodName()`（保持旧行为）
-
-### 2.3 带参数的 click
-
-当前 `.click()` 不支持直接传参数。Action 方法必须是**无参**的：
+Rust 方法的参数从 AE 组件属性中传递：
 
 ```rust
-// 可以被 .click() 调用
-pub fn on_click(&mut self) { ... }
-
-// 不能直接被 .click() 调用（有参数）
-pub fn open_file(&mut self, path: &str) { ... }
+// Rust 侧
+pub fn open_file(&mut self, path: String) { ... }
 ```
 
-**变通方案**：对于需要参数的操作，使用 TextField 绑定 + 确认按钮模式：
-
-1. TextField 绑定一个临时输入字段
-2. `.click()` 调用无参方法，方法内部从临时字段读取值
-
-### 2.4 特殊 click 生成
-
-翻译器为常见操作生成便利方法：
-
-| .ae 写法 | Swift 生成 |
-|---------|-----------|
-| `.click(action=setEditorModeCode)` | `editorManager.setEditorModeCode()` |
-| `.click(action=setEditorModeDesign)` | `editorManager.setEditorModeDesign()` |
-| `.click(action=activateTab0)` | `editorManager.activateTab0()` |
-| `.click(action=closeTab0)` | `editorManager.closeTab0()` |
-
-这些便利方法由 Manager 自动生成，不需要在 Rust 中定义。
+```ae
+// AE 侧
+Button("打开" onClick={Home.open_file("config.toml")})
+```
 
 ---
 
@@ -122,41 +85,18 @@ pub fn open_file(&mut self, path: &str) { ... }
 ### 3.1 绑定语法
 
 ```ae
-TextField("{Editor.activeContent}")
+TextField(value={Editor.activeContent} placeholder="输入内容")
 ```
 
 ### 3.2 绑定解析
 
-翻译器解析 `"{TypeName.field}"` 中的 `TypeName` 来确定绑定目标：
+翻译器解析 `{TypeName.field}` 中的 `TypeName` 来确定双向绑定目标：
 
 | TypeName | Swift 绑定 | 说明 |
 |----------|-----------|------|
-| `Editor` / `EditorState` | `editorManager.$activeContent` | Manager 的 Binding |
-| 其他有 Manager 的类型 | `{typeVar}.$field` | 对应 Manager 的 Binding |
-| 当前页面的 logic 类型 | `viewModel.$field` | ViewModel 的 @Published 属性 |
-
-**注意**：TextField 绑定使用 `$` 前缀语法（SwiftUI `Binding`），这意味着：
-- 对于 Manager 绑定，Manager 上必须有对应的 `@Published var field`
-- 对于 ViewModel 绑定，ViewModel 上必须有对应的 `@Published var field`
-
-### 3.3 ViewModel @Published 自动生成
-
-当 `.ae` 文件中使用了 `{TypeName.field}` 且 `TypeName` 对应当前页面的逻辑类型时，翻译器会自动在 ViewModel 上生成对应的 `@Published` 属性：
-
-```swift
-class HomeViewModel: ObservableObject {
-    let logic: Home
-    @Published var searchText: String = ""  // 自动生成
-
-    init() {
-        self.logic = Home()
-    }
-
-    func syncFromLogic() {
-        searchText = logic.getSearchText()
-    }
-}
-```
+| `Editor` / `EditorState` | `$editorManager.activeContent` | Manager 的 Binding |
+| 其他有 Manager 的类型 | `$typeManager.field` | 对应 Manager 的 Binding |
+| 当前页面的 logic 类型 | `$viewModel.field` | ViewModel 的 @Published 属性 |
 
 ---
 
@@ -179,26 +119,23 @@ class HomeViewModel: ObservableObject {
 ### .ae 文件
 
 ```ae
-VStack {
-    // 数据绑定：显示 Editor 状态
-    Text("{Editor.activeFileName}")
+VStack(spacing=12) {
+    // 数据绑定：显示状态
+    Text({Editor.activeFileName}).size(16).bold()
 
     // TextField 双向绑定
-    TextField("{Editor.activeContent}")
+    TextField(value={Editor.activeContent} placeholder="输入内容")
 
-    // click 分发：显式指定目标
-    Button("Open") .click(action=Editor.openFile)
-    Button("Close") .click(action=Editor.closeFile)
+    // 事件绑定
+    Button("打开文件" onClick={Editor.open_file("main.rs")})
+    Button("保存" onClick={Editor.save_file()})
 
-    // click 分发：无前缀（向后兼容）
-    Button("Save") .click(action=saveFile)
-
-    // click 分发：调用页面逻辑
-    Button("Refresh") .click(action=Home.on_click)
+    // 调用页面逻辑方法
+    Button("刷新" onClick={Home.refresh_data()})
 
     // 条件显示
-    if editorMode == "code" {
-        Text("Code Mode")
+    If(condition={Editor.hasErrors}) {
+        Text("有错误").color($colors.error)
     }
 }
 ```
@@ -206,18 +143,17 @@ VStack {
 ### 生成的 Swift 代码（概要）
 
 ```swift
-VStack {
-    Text(editorManager.activeFileName)
-    TextField("", text: editorManager.$activeContent)
+VStack(spacing: 12) {
+    Text(editorManager.activeFileName).font(.system(size: 16)).bold()
+    TextField("输入内容", text: $editorManager.activeContent)
 
-    Button("Open") { editorManager.openFile() }
-    Button("Close") { editorManager.closeFile() }
+    Button("打开文件") { editorManager.openFile(path: "main.rs") }
+    Button("保存") { editorManager.saveFile() }
 
-    Button("Save") { editorManager.saveFile() }
-    Button("Refresh") { viewModel.logic.on_click() }
+    Button("刷新") { viewModel.logic.refreshData() }
 
-    if editorManager.editorMode == .code {
-        Text("Code Mode")
+    if editorManager.hasErrors {
+        Text("有错误").foregroundColor(AppColors.error)
     }
 }
 .onAppear { editorManager.subscribeObserver() }
@@ -230,6 +166,6 @@ VStack {
 | 错误写法 | 原因 | 正确写法 |
 |---------|------|---------|
 | `{EditorState.activeFile}` | TypeName 应该用简短名 `Editor` | `{Editor.activeFile}` |
-| `.click(action=openFile("path"))` | click 不支持传参 | 用 TextField 绑定 + 无参 click |
+| `onClick=open_file("path")` | 缺少花括号和 TypeName | `onClick={Home.open_file("path")}` |
 | `{editor.activeContent}` | TypeName 必须大写开头 | `{Editor.activeContent}` |
-| `TextField("{Editor.activeContent}")` 但 ViewModel 无该属性 | ViewModel 需要自动生成 @Published | 确保翻译器能发现该绑定 |
+| `TextField("{Editor.activeContent}")` 但 ViewModel 无该属性 | 需要确保翻译器能发现该绑定 | 检查 Rust 方法签名 |

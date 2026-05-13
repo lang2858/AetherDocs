@@ -2,11 +2,11 @@
 
 ## Why Aether?
 
-Aether 专为 AI 代码生成设计 — AE 语言的简洁声明式语法让 AI 只需输出描述，框架自动生成全平台原生代码：
+Aether 是一个声明式跨平台原生应用开发框架。开发者用 AE 标记语言编写 UI，用 Rust 编写逻辑，编译器静态转译为各平台原生代码，零运行时开销：
 
-- **AI-Friendly**: 无样板代码，语义化组件一行即组件，声明即实现
-- **自动绑定**: `$state` 声明即绑定，`$logic.method()` 调用 Rust 逻辑层
-- **全平台**: macOS/iOS (SwiftUI) · Android (Compose) · 微信小程序 (WXML) · Backend (Rust，规划中)
+- **声明式 UI**: AE 标记语言描述界面，组件化、可复用、主题令牌化
+- **Rust 逻辑层**: 业务逻辑用 Rust 编写，UniFFI 自动生成跨语言绑定
+- **多平台输出**: macOS/iOS (SwiftUI) · Android (Compose) · Windows (WinUI) · Web (WASM)
 
 ## 环境要求
 
@@ -67,11 +67,13 @@ aether --version
 aether init myapp
 ```
 
-也可以指定项目路径：
+也可以指定项目路径和模板：
 
 ```bash
-aether init myapp --path ~/projects
+aether init myapp --path ~/projects --template basic
 ```
+
+可用的模板（`--template`）：`blank`（空白项目）、`basic`（基础示例）、`todo`（待办事项示例）。
 
 CLI 会自动生成完整的项目目录结构，包括 UI 文件、逻辑文件、主题和国际化配置。
 
@@ -150,23 +152,24 @@ open gen/macos/MyappApp.xcodeproj
 
 | 平台 | 参数 | 说明 |
 |------|------|------|
-| macOS | `macos` | 桌面应用 |
+| macOS | `macos` | 桌面应用 — 生产可用 |
 | iPhone | `iphone` | iOS 手机应用 |
 | iPad | `ipad` | iOS 平板应用 |
+| Web | `web` | Web 应用 (WASM + HTML) — 生产可用 |
 
-### 未来支持
+### 代码已就绪（接入中）
 
 | 平台 | 参数 | 说明 |
 |------|------|------|
-| Android | `android` | 安卓手机应用 (Jetpack Compose) |
-| Android Pad | `android-pad` | 安卓平板应用 |
-| 微信小程序 | `wechat` | 微信小程序 (WXML/WXSS) |
+| Android | `android` | 安卓应用 (Jetpack Compose) |
 | Windows | `windows` | Windows 桌面应用 (WinUI 3) |
 | Linux | `linux` | Linux 桌面应用 |
-| HarmonyOS | `harmony` | 鸿蒙手机应用 (ArkUI) |
-| HarmonyOS Pad | `harmony-pad` | 鸿蒙平板应用 |
-| Web | `web` | Web 应用 (WASM) |
-| Backend | — | 后端服务 (Rust) — 规划中 |
+
+### 规划中
+
+| 平台 | 参数 | 说明 |
+|------|------|------|
+| HarmonyOS | `harmony` | 鸿蒙应用 (ArkUI) |
 
 ## CLI 命令参考
 
@@ -175,29 +178,32 @@ open gen/macos/MyappApp.xcodeproj
 创建新的 Aether 项目。
 
 ```bash
-aether init <name> [--path <dir>]
+aether init <name> [--path <dir>] [--template <template>]
 ```
 
 | 参数 | 说明 |
 |------|------|
 | `<name>` | 项目名称，必填 |
 | `--path <dir>` | 项目路径，默认为当前目录下的 `<name>` 子目录 |
+| `--template, -t <template>` | 项目模板：`blank`（默认）、`basic`、`todo` |
 
 ### aether build
 
 编译 Aether 项目，生成原生应用。
 
 ```bash
-aether build [--project <dir>] [--platform <platform>] [--release]
+aether build [--project <dir>] [--platform <platform>] [--build-dir <dir>] [--release] [--force]
 ```
 
 | 参数 | 说明 |
 |------|------|
-| `--project <dir>` | 项目路径，默认为当前目录 `.` |
-| `--platform <platform>` | 目标平台，默认为 `macos` |
+| `--project, -p <dir>` | 项目路径，默认为当前目录 `.` |
+| `--platform <platform>` | 目标平台，默认为当前系统平台 |
+| `--build-dir <dir>` | 构建输出路径，默认为项目下的 `gen` |
 | `--release` | Release 构建模式（默认为 debug） |
+| `--force` | 强制全量构建，跳过增量编译缓存 |
 
-可用的 platform 值：`macos`、`iphone`、`ipad`
+可用的 platform 值：`macos`、`iphone`、`ipad`、`web`、`android`、`windows`、`linux`
 
 ### aether trans
 
@@ -209,8 +215,8 @@ aether trans [--project <dir>] [--build-dir <dir>] [--platform <platform>]
 
 | 参数 | 说明 |
 |------|------|
-| `--project <dir>` | 项目路径，默认为当前目录 `.` |
+| `--project, -p <dir>` | 项目路径，默认为当前目录 `.` |
 | `--build-dir <dir>` | 构建输出路径，默认为项目下的 `gen` |
 | `--platform <platform>` | 目标平台，默认为当前系统平台 |
 
-可用的 platform 值：`macos`、`iphone`、`ipad`
+可用的 platform 值：`macos`、`iphone`、`ipad`、`web`、`android`、`windows`、`linux`

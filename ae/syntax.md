@@ -68,7 +68,7 @@ Text("内容" size=14 color="#FFF" weight="bold")
 Text("内容").size(14).color("#FFF").bold()
 ```
 
-可用内联属性：`size`、`weight`、`color`、`numberFormat`、`decimalPlaces`、`prefix`、`suffix`、`autoScale`、`minScale`、`font`。
+可用内联属性：`size`、`weight`、`color`、`numberFormat`、`decimalPlaces`、`prefix`、`suffix`、`autoScale`、`minScale`、`font`、`onTap`。
 
 ---
 

@@ -1,56 +1,60 @@
 # 诊断系统
 
-Aether 编译器在代码生成阶段会验证 AE 源码中的主题引用，发现错误时报告诊断信息并中断构建，避免问题流入 Xcode 编译阶段。
+Aether 编译器和 Lint 层在转译和验证阶段会检查 AE 源码和配置文件中的错误，发现问题时报告诊断信息并中断构建，避免问题流入原生编译阶段。
 
-## 错误码
+## 错误码速查
 
-### E001 — 颜色引用不存在
+### AE 语法错误 (E010–E025)
 
-引用了主题中未定义的 `$colors.xxx`。
+| 错误码 | 级别 | 说明 |
+|--------|------|------|
+| E010 | Error | 组件不在规范中 — 组件名拼写错误或非内置/自定义组件 |
+| E011 | Error | 修饰符不在规范中 — `.xxx()` 不合法 |
+| E012 | Error | 自定义组件 `:Name` 被调用但未找到定义 |
+| E013 | Error | 花括号不平衡 — 多了或少了 `{` / `}`，或括号未闭合 |
+| E014 | Error | 属性值类型错误 — 期望数字却给了字符串等 |
+| E015 | Error | 必填属性缺失 — 组件缺少必填参数 |
+| E016 | Error | 属性名不存在 — 组件不支持该属性 |
+| E017 | Error | 文本内容缺失 — 需要 text_content 的组件（如 Text）未提供 |
+| E020 | Error | 事件绑定无效 — onClick/onTap 引用了不存在的方法 |
+| E021 | Error | 状态绑定无效 — `{Type.field}` 中的 Type 或 field 不存在 |
+| E022 | Error | 使用了中文引号 `""` `''` — 请使用英文引号 `"` `'` |
+| E023 | Error | I18n 引用无效 — `@i18n.key` 在翻译表中不存在 |
+| E024 | Error | 资源引用无效 — `$assets.xxx` 对应的 SVG 不存在 |
+| E025 | Error | 组件嵌套错误 — 不支持子组件的组件被赋予了 children |
 
-```ae
-// 错误: 主题中没有 "border" 颜色
-.bg($colors.border)
-```
+### 主题令牌错误 (E001–E004)
 
-```
-error[E001]: 颜色 '$colors.border' 不存在，请检查 src/themes/ 中的主题配置
-  └─ src/ui/home.ae:7
-```
+| 错误码 | 级别 | 说明 |
+|--------|------|------|
+| E001 | Error | 颜色引用不存在 — `$colors.xxx` 在主题中未定义 |
+| E002 | Error | 间距引用不存在 — `$spacing.xxx` 在主题中未定义 |
+| E003 | Error | 圆角引用不存在 — `$radius.xxx` 在主题中未定义 |
+| E004 | Error | 排版引用不存在 — `$typography.xxx` 在主题中未定义 |
 
-### E002 — 间距引用不存在
+### 配置文件错误 (E030–E041)
 
-引用了主题中未定义的 `$spacing.xxx`。
-
-```
-error[E002]: 间距 '$spacing.xxx' 不存在，请检查 src/themes/ 中的主题配置
-```
-
-### E003 — 圆角引用不存在
-
-引用了主题中未定义的 `$radius.xxx`。
-
-```
-error[E003]: 圆角 '$radius.xxx' 不存在，请检查 src/themes/ 中的主题配置
-```
-
-### E004 — 排版引用不存在
-
-引用了主题中未定义的 `$typography.xxx`。
-
-```
-error[E004]: 排版 '$typography.xxx' 不存在，请检查 src/themes/ 中的主题配置
-```
+| 错误码 | 级别 | 说明 |
+|--------|------|------|
+| E030 | Error | 未知的配置段 — `aether.toml` 中存在不合法的 section |
+| E031 | Error | 未知的配置字段 — 某 section 中出现不合法的 key |
+| E032 | Error | 配置值类型错误 — 字段值类型不匹配（如 width 写了字符串） |
+| E033 | Error | 配置值不合法 — 枚举值不在允许范围内（如 titlebar_style） |
+| E034 | Error | 未知平台 — `[platform.xxx]` 中的平台名不在支持列表中 |
+| E035 | Error | 未知主题段 — `theme.toml` 中存在不合法的 section |
+| E036 | Error | 颜色值不合法 / 组件缺少括号 — hex 格式错误，或组件名后缺 `()` |
+| E037 | Error | 字重值不合法 — typography weight 不在允许列表中 |
+| E038 | Error | I18n 键名不合法 — 键名包含非法字符 |
+| E039 | Error | I18n 值格式错误 — 键值不是字符串 |
+| E040 | Error | 引用格式无效 — i18n/assets 引用语法错误 |
+| E041 | Error | 引用指向未定义资源 — 引用仅在 theme/翻译中不存在的令牌 |
 
 ## 警告码
 
-### W001 — 颜色 fallback
-
-代码中硬编码使用了一个主题中不存在的颜色名，编译器自动使用 fallback 值。
-
-```
-warning[W001]: 主题颜色 'xxx' 不存在，使用 fallback 'yyy'，请检查 src/themes/ 中的主题配置
-```
+| 警告码 | 级别 | 说明 |
+|--------|------|------|
+| W001 | Warning | 颜色 fallback — 硬编码了一个主题中不存在的颜色名，编译器自动使用 fallback |
+| W002 | Warning | 样式回退 — 某个样式属性不适用，回退到默认值 |
 
 ## 输出格式
 
@@ -60,5 +64,37 @@ warning[W001]: 主题颜色 'xxx' 不存在，使用 fallback 'yyy'，请检查 
 
 ## 行为规则
 
-- **Error 级别**：中断构建，不执行 Rust 编译和 Xcode 构建，退出码为 1
+- **Error 级别**：中断构建，不执行后续编译步骤，退出码为 1
 - **Warning 级别**：仅打印提示，不中断构建
+
+## 示例
+
+```ae
+// E001: 主题中没有 "border" 颜色
+.bg($colors.border)
+```
+
+```
+error[E001]: 颜色 '$colors.border' 不存在，请检查 src/themes/ 中的主题配置
+  └─ src/ui/home.ae:7
+```
+
+```ae
+// E010: 组件名拼写错误
+TexT("Hello")  // 应当是 Text
+```
+
+```
+error[E010]: 组件 'TexT' 不在规范中（可能是自定义组件或拼写错误）
+  └─ src/ui/home.ae:3
+```
+
+```ae
+// E022: 中文引号
+Text("你好")  // 双引号是中文全角字符
+```
+
+```
+error[E022]: 使用了中文双引号 '"'，请使用英文引号 '"' 或 '''
+  └─ src/ui/home.ae:1
+```

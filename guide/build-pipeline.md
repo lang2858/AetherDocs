@@ -150,11 +150,13 @@ Category A 的 stub 函数始终生成（Rust 侧），Category C 的实现放�
 
 ## 未来后端
 
-当前只有 SwiftUI 后端完整连通。代码库中已存在其他平台后端的代码生成器，但尚未接入构建流水线：
+当前 SwiftUI (macOS/iOS) 和 Web (WASM) 后端已完整连通。代码库中已存在其他平台后端的代码生成器，正在接入构建流水线：
 
-| 后端 | 模块 | 目标 |
-|------|------|------|
-| `ComposeGen` | `aether-codegen::compose` | Kotlin / Jetpack Compose（Android） |
-| `ArkUIGen` | `aether-codegen::arkui` | HarmonyOS eTS / ArkUI |
+| 后端 | 模块 | 目标 | 状态 |
+|------|------|------|------|
+| `SwiftUI` | `aether-codegen::swift_platform` | SwiftUI（macOS / iOS） | **生产可用** |
+| `Web` | `aether-codegen::web_platform` | HTML + WASM | **生产可用** |
+| `Android` | `aether-codegen::android_platform` | Kotlin / Jetpack Compose | 代码就绪，接入中 |
+| `Windows` | `aether-codegen::windows_platform` | C# / WinUI 3 | 代码就绪，接入中 |
 
-这些后端将逐步接入，届时 `aether build --platform android` 和 `aether build --platform harmony` 将直接可用。
+这些后端逐步接入后，`aether build --platform android` 和 `aether build --platform windows` 将直接可用。

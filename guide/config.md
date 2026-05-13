@@ -65,6 +65,12 @@ photo_library = false
 location = false
 notifications = false
 
+[project]
+rust_src = "src/logic"
+
+[logic]
+entry = "home"
+
 [theme]
 default = "light"
 available = ["light", "dark"]
@@ -200,6 +206,33 @@ force_exclude = ["Video"]      # 强制排除（即使扫描检测到）
 | `FilePicker` | `AETHER_FILE_PICKER` | FilePickerDelegateImpl、AetherBridge.registerFilePickerDelegate() |
 | `Drawer` | `AETHER_DRAWER` | DrawerDelegateImpl、AetherBridge.registerDrawerDelegate() |
 
+### [permissions]
+
+权限声明，用于生成平台权限配置文件（Info.plist / AndroidManifest 等）。
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `camera` | bool | `false` | 相机权限 |
+| `photo_library` | bool | `false` | 相册权限 |
+| `location` | bool | `false` | 定位权限 |
+| `notifications` | bool | `false` | 通知权限 |
+
+### [project]
+
+项目构建相关配置。
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `rust_src` | string | `"src/logic"` | Rust 逻辑源码目录路径 |
+
+### [logic]
+
+逻辑层入口配置。
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `entry` | string | — | 入口逻辑模块名（对应 `src/logic/<entry>.rs`） |
+
 ### [theme]
 
 主题配置。
@@ -269,6 +302,12 @@ force_exclude = ["Video"]      # 强制排除（即使扫描检测到）
 | `[platform.web]` | `enabled` | `false` |
 | `[capabilities]` | `force_include` | `[]` |
 | `[capabilities]` | `force_exclude` | `[]` |
+| `[permissions]` | `camera` | `false` |
+| `[permissions]` | `photo_library` | `false` |
+| `[permissions]` | `location` | `false` |
+| `[permissions]` | `notifications` | `false` |
+| `[project]` | `rust_src` | `"src/logic"` |
+| `[logic]` | `entry` | — |
 | `[theme]` | `default` | `"light"` |
 | `[theme]` | `available` | `["light", "dark"]` |
 | `[i18n]` | `default` | `"zh-CN"` |

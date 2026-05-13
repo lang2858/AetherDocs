@@ -13,11 +13,11 @@ AE 展示组件用于呈现文本、图片、图标等可见内容。所有展�
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | text | str | 必填 | 文本内容 |
-| size | num | — | 字号 |
-| weight | enum | normal | 字重：`thin` / `light` / `regular` / `normal` / `medium` / `semibold` / `bold` |
+| size | num | 12 | 字号 |
+| weight | enum | regular | 字重：`thin` / `light` / `regular` / `normal` / `medium` / `semibold` / `bold` |
 | color | str | — | 文字颜色 |
 | maxLines | num | — | 最大行数限制 |
-| overflow | enum | wrap | 溢出处理：`clip`（裁剪）/ `ellipsis`（省略号）/ `wrap`（换行） |
+| overflow | enum | — | 溢出处理：`clip`（裁剪）/ `ellipsis`（省略号）/ `wrap`（换行） |
 | align | enum | start | 对齐方式：`start` / `center` / `end` / `justify` |
 | numberFormat | enum | — | 数字格式化：`none` / `decimal` / `percent` / `scientific` / `currency` |
 | decimalPlaces | num | — | 小数位数 |
@@ -26,6 +26,7 @@ AE 展示组件用于呈现文本、图片、图标等可见内容。所有展�
 | autoScale | bool | — | 是否自动缩放适配 |
 | minScale | num | — | 最小缩放比例 |
 | font | str | — | 自定义字体名称 |
+| onTap | callback | — | 点击文本时触发 |
 
 ### 事件
 

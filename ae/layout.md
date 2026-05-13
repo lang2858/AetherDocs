@@ -13,8 +13,11 @@ AE 布局组件用于组织页面的空间结构。所有布局组件均支持 `
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的垂直间距 |
-| align | enum | center | 水平对齐方式（交叉轴）：`start`（前导/左）/ `center`（居中）/ `end`（尾随/右）。使用方向中性值，Codegen 根据平台映射为具体值。 |
-| justify | enum | start | 主轴排列方式：`start`（前导/靠顶）/ `center`（居中）/ `end`（尾随/靠底）。使用方向中性值。 |
+| alignX | enum | — | 水平（交叉轴）对齐：`start`（左）/ `center`（居中）/ `end`（右）。别名 `align_x` |
+| alignY | enum | — | 垂直（主轴）对齐：`start`（顶）/ `center`（居中）/ `end`（底）。别名 `align_y` |
+| align | enum | — | 同时设置两轴对齐的快捷方式，值同上。别名 `alignment` |
+| justify | enum | — | 主轴排列：`start`（靠顶）/ `center`（居中）/ `end`（靠底） |
+| wrap | enum | — | 换行模式：`nowrap`（不换行）/ `wrap`（换行）/ `wrapReverse`（反向换行） |
 
 ### 事件
 
@@ -65,8 +68,11 @@ VStack(alignment: .leading, spacing: 12) {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | spacing | num | 0 | 子组件之间的水平间距 |
-| align | enum | center | 垂直对齐方式（交叉轴）：`start`（顶部）/ `center`（居中）/ `end`（底部）。使用方向中性值，Codegen 根据平台映射为具体值。 |
-| justify | enum | start | 主轴排列方式：`start`（前导/靠左）/ `center`（居中）/ `end`（尾随/靠右）。使用方向中性值。 |
+| alignX | enum | — | 水平（主轴）对齐：`start`（左）/ `center`（居中）/ `end`（右）。别名 `align_x` |
+| alignY | enum | — | 垂直（交叉轴）对齐：`start`（顶）/ `center`（居中）/ `end`（底）。别名 `align_y` |
+| align | enum | — | 同时设置两轴对齐的快捷方式，值同上。别名 `alignment` |
+| justify | enum | — | 主轴排列：`start`（靠左）/ `center`（居中）/ `end`（靠右） |
+| wrap | enum | — | 换行模式：`nowrap`（不换行）/ `wrap`（换行）/ `wrapReverse`（反向换行） |
 
 ### 事件
 
@@ -147,7 +153,12 @@ justify 通过在子元素前后插入 `Spacer()` 实现主轴排列：
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| align | enum | center | 对齐方式：`start`（前导/左上）/ `center`（居中）/ `end`（尾随/右下）。使用方向中性值，Codegen 根据平台映射为具体值。 |
+| spacing | num | 0 | 子组件之间的间距 |
+| alignX | enum | — | 水平对齐：`start`（左）/ `center`（居中）/ `end`（右）。别名 `align_x` |
+| alignY | enum | — | 垂直对齐：`start`（顶）/ `center`（居中）/ `end`（底）。别名 `align_y` |
+| align | enum | — | 同时设置两轴对齐的快捷方式，值同上。别名 `alignment` |
+| justify | enum | — | 主轴排列：`start` / `center` / `end` |
+| wrap | enum | — | 换行模式：`nowrap` / `wrap` / `wrapReverse` |
 
 ### 事件
 
