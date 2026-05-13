@@ -11,17 +11,17 @@ Aether 支持自定义组件，允许开发者封装可复用的 UI 片段。组
 在 `.ae` 文件中直接声明组件：
 
 ```ae
-component ActionButton(icon, label, onClick, color="$colors.text", width=220) {
-    Button(label onClick={onClick}) {
-        HStack(spacing=8) {
-            Icon(name=icon size=16 color=color)
-            Text(label size=14 color=color)
-        }
-        .pad(left=12 right=16 top=8 bottom=8)
-        .bg(opacity=0)
-        .border(color=color width=1 radius=8)
-        .w(width)
+component ActionButton(icon: String, label: String, onClick: Action, color: String="$colors.text", width: Int=220)
+
+Button(#label onClick=#onClick) {
+    HStack(spacing=8) {
+        Icon(name=#icon size=16 color=#color)
+        Text(#label).size(14).color(#color)
     }
+    .pad(left=12 right=16 top=8 bottom=8)
+    .bg(opacity=0)
+    .border(color=#color width=1 radius=8)
+    .w(#width)
 }
 ```
 
@@ -47,11 +47,11 @@ component ActionButton(icon, label, onClick, color="$colors.text", width=220) {
 // src/ui/components/project_navigator.ae
 component() {
     VStack(spacing=0) {
-        Text("PROJECT" size=11 color="$colors.text_hint" weight="semibold")
+        Text("PROJECT").size(11).color($colors.text_hint).semibold()
             .pad(left=16 top=8 bottom=4)
         FileTree(root="/src" onSelect={Home.on_file_select()} filter="*.swift")
     }
-    .bg("$colors.surface")
+    .bg($colors.surface)
 }
 ```
 
@@ -61,50 +61,72 @@ component() {
 
 ## 参数定义
 
-参数以逗号分隔，可选参数使用 `=` 指定默认值：
+组件参数在 `component` 声明中定义，使用逗号分隔，支持类型注解和默认值：
 
 ```ae
-component(icon, label, size=100, color="$colors.primary") {
-    // body
-}
+component NavSection(icon: String, title: String, subtitle: String)
 ```
 
-| 参数 | 必填 | 默认值 | 说明 |
-|------|------|--------|------|
-| icon | 是 | — | 图标名称，无默认值 |
-| label | 是 | — | 文字，无默认值 |
-| size | 否 | 100 | 尺寸，默认 100 |
-| color | 否 | $colors.primary | 颜色，默认主题色 |
+```ae
+component NewProjectModal(visible: Bool, dismissible: Bool=true, onClose: Action)
+```
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| icon | String | 是 | — | 图标名称，无默认值 |
+| title | String | 是 | — | 文字，无默认值 |
+| dismissible | Bool | 否 | true | 是否可关闭 |
+| onClose | Action | 是 | — | 关闭回调，无默认值 |
 
 ### 参数类型
 
-参数类型均为字符串，codegen 时根据上下文推断实际类型：
+| 类型 | 说明 | Swift 映射 |
+|------|------|-----------|
+| `String` | 字符串（默认） | `String` |
+| `Bool` | 布尔值 | `@Binding var name: Bool`（无默认值）<br>`let name: Bool`（有默认值） |
+| `Int` | 整数 | `@Binding var name: Int`（无默认值）<br>`let name: Int`（有默认值） |
+| `Double` | 浮点数 | `@Binding var name: Double`（无默认值）<br>`let name: Double`（有默认值） |
+| `Action` | 回调闭包 | `let name: () -> Void` |
 
-- **数字**：`size=100` → Swift `CGFloat(100)`
-- **颜色引用**：`color="$colors.primary"` → Swift `AppColors.primary`
-- **资源引用**：`icon=$assets.gear` → Swift `AppAssets.gear`
-- **回调**：`onClick={Home.on_tap()}` → Swift 闭包
+未标注类型的参数默认为 `String`。
+
+### 默认值
+
+使用 `=` 为参数指定默认值，调用时可省略有默认值的参数：
+
+```ae
+component Dialog(visible: Bool, dismissible: Bool=true, onClose: Action)
+```
+
+- `visible` — 无默认值，调用时必须传入绑定
+- `dismissible` — 默认 `true`，可省略
+- `onClose` — 无默认值，调用时必须传入闭包
 
 ---
 
-## 组件体（Body）
+## 参数引用
 
-花括号 `{ }` 之间的 AE 代码行构成组件体。使用 `{paramName}` 引用参数值：
+在组件 body 中使用 `#paramName` 引用参数值：
 
 ```ae
-component(icon, label, onClick, color="$colors.primary") {
-    HStack(spacing=8) {
-        Icon(name={icon} size=16 color={color})
-        Text({label} size=14 color={color})
-    }
-    .pad(12)
-    .bg(opacity=0)
-    .border(color={color} width=1 radius=8)
-    .onClick({onClick})
+component NavSection(icon: String, title: String, subtitle: String)
+
+HStack(spacing=12) {
+    Icon(name=#icon size=12 color=$colors.text_secondary)
+    Text(#title).size(11).bold().color($colors.text_secondary)
+    Text(#subtitle).size(11).color($colors.text_secondary)
 }
 ```
 
-`{icon}`、`{label}` 等参数引用在展开时被实际传入值替换。
+### 引用语法对照
+
+| 语法 | 含义 | 示例 |
+|------|------|------|
+| `#paramName` | 组件参数引用 | `#title`、`#isActive`、`#onTap` |
+| `$colors.xxx` | 主题颜色 token | `$colors.text`、`$colors.surface` |
+| `{Type.field}` | 状态管理器绑定 | `{Welcome.show_new_project_form}` |
+
+> **注意**：`#` 用于参数引用，`$` 用于主题 token 和状态绑定，不要混淆。
 
 ---
 
@@ -113,30 +135,26 @@ component(icon, label, onClick, color="$colors.primary") {
 使用 `:` 前缀加组件名的方式调用自定义组件，传入的参数覆盖默认值：
 
 ```ae
-:ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
+:nav_section(icon="folder" title="收藏")
 ```
 
 `:` 前缀明确标识这是自定义组件调用，与内置布局控件（如 `VStack`、`Toolbar`）区分。内置控件不带前缀直接使用：
 
 ```ae
 VStack(spacing=8) {           // 内置布局控件
-    :ActionButton(...)         // 自定义组件
+    :nav_section(...)          // 自定义组件
 }
 Toolbar {                      // 内置 Toolbar 布局控件
     Icon(...)
     Spacer()
 }
-:Toolbar(icon="star")          // 自定义 Toolbar 组件（与内置同名）
 ```
 
 未传入的可选参数使用定义时的默认值：
 
 ```ae
-// color 使用默认值 "$colors.text"，width 使用默认值 220
-:ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
-
-// 覆盖 color 和 width
-:ActionButton(icon="trash" label="Delete" onClick={Home.on_delete()} color="$colors.error" width=180)
+// dismissible 使用默认值 true
+:new_project_modal(visible={Welcome.show_new_project_form} onClose={Welcome.cancel_new_project()})
 ```
 
 ---
@@ -148,10 +166,10 @@ Toolbar {                      // 内置 Toolbar 布局控件
 ### 展开过程
 
 ```
-1. 解析调用 → :ActionButton(icon="plus" label="Create" onClick={Home.on_create()})
-2. 查找定义 → component ActionButton(icon, label, onClick, color="$colors.text", width=220) { ... }
-3. 参数绑定 → icon="plus", label="Create", onClick={Home.on_create()}, color="$colors.text", width=220
-4. 替换引用 → {icon} → "plus", {label} → "Create", {onClick} → Home.on_create(), {color} → "$colors.text", {width} → 220
+1. 解析调用 → :nav_section(icon="folder" title="收藏")
+2. 查找定义 → component NavSection(icon: String, title: String, subtitle: String) { ... }
+3. 参数绑定 → icon="folder", title="收藏"
+4. 替换引用 → #icon → "folder", #title → "收藏"
 5. 内联展开 → 将替换后的 body 插入调用位置
 6. 递归处理 → 展开后的代码继续经过 codegen 流程
 ```
@@ -162,20 +180,20 @@ Toolbar {                      // 内置 Toolbar 布局控件
 
 ```ae
 // src/ui/components/gap_divider.ae
-component(gap=8) {
-    Spacer(h=gap)
-    Divider()
-    Spacer(h=gap)
-}
+component(gap: Int=8)
+
+Spacer(h=#gap)
+Divider()
+Spacer(h=#gap)
 ```
 
 调用：
 
 ```ae
 VStack(spacing=0) {
-    Text("标题" size=18 weight="bold")
-    GapDivider(gap=16)
-    Text("内容" size=14)
+    Text("标题").size(18).bold()
+    :gap_divider(gap=16)
+    Text("内容").size(14)
 }
 ```
 
@@ -183,11 +201,11 @@ VStack(spacing=0) {
 
 ```ae
 VStack(spacing=0) {
-    Text("标题" size=18 weight="bold")
+    Text("标题").size(18).bold()
     Spacer(h=16)
     Divider()
     Spacer(h=16)
-    Text("内容" size=14)
+    Text("内容").size(14)
 }
 ```
 
@@ -195,32 +213,16 @@ VStack(spacing=0) {
 
 ## 动态资源引用
 
-参数值可以用于动态构建资源引用。使用 `$assets.{icon}` 语法，其中 `{icon}` 是参数名：
+参数值可以用于动态构建资源引用。使用 `$assets.#icon` 语法，其中 `#icon` 是参数名：
 
 ```ae
-component(icon, label, onClick) {
-    HStack(spacing=8) {
-        Image(src=$assets.{icon} size=20)
-        Text({label} size=14)
-    }
-    .onClick({onClick})
-}
-```
+component ActionButton(icon: String, label: String, onClick: Action)
 
-调用：
-
-```ae
-ActionButton(icon="plus" label="新建" onClick={Home.on_create()})
-```
-
-展开后 `{icon}` 被替换为 `"plus"`：
-
-```ae
 HStack(spacing=8) {
-    Image(src=$assets.plus size=20)
-    Text("新建" size=14)
+    Image(src=$assets.#icon).size(20)
+    Text(#label).size(14)
 }
-.onClick(Home.on_create())
+.onTap(#onClick)
 ```
 
 SwiftUI 输出：
@@ -246,83 +248,17 @@ Toolbar {             // 内置 Toolbar 布局控件（生成 .toolbar { Toolbar
     Icon(...)
 }
 
-:Toolbar(icon="star") // 自定义组件（来自 src/ui/components/toolbar.ae）
+:toolbar(icon="star") // 自定义组件（来自 src/ui/components/toolbar.ae）
 ```
 
 | 类型 | 语法 | 示例 |
 |------|------|------|
 | 内置布局控件 | 名称直接使用 | `VStack { ... }`、`Toolbar { ... }` |
-| 自定义组件 | `:` 前缀 | `:ActionButton(icon="plus")`、`:Toolbar(icon="star")` |
+| 自定义组件 | `:` 前缀 | `:action_button(icon="plus")`、`:toolbar(icon="star")` |
 
 ---
 
 ## 完整项目示例
-
-### partition-manager 项目
-
-```
-src/ui/
-├── routes.ae
-├── home.ae
-└── components/
-    ├── action_button.ae    → ActionButton
-    ├── partition_card.ae   → PartitionCard
-    ├── gap_divider.ae      → GapDivider
-    └── select_field.ae     → SelectField
-```
-
-`action_button.ae` — 通用操作按钮：
-
-```ae
-component(icon, label, onClick, color="$colors.text", width=220) {
-    Button(label onClick={onClick}) {
-        HStack(spacing=8) {
-            Icon(name={icon} size=16 color={color})
-            Text({label} size=14 color={color})
-        }
-        .pad(left=12 right=16 top=8 bottom=8)
-        .bg(opacity=0)
-        .border(color={color} width=1 radius=8)
-        .w(width)
-    }
-}
-```
-
-`partition_card.ae` — 分区信息卡片：
-
-```ae
-component(name, size, type, used) {
-    VStack(spacing=8) {
-        HStack(space="between") {
-            Text({name} size=16 weight="bold")
-            Text({type} size=12 color="$colors.text_hint")
-        }
-        Progress(value={used} max=100 type="linear")
-        Text({size} size=13 color="$colors.text_secondary")
-    }
-    .pad(16)
-    .bg("$colors.surface")
-    .radius(12)
-    .shadow(size=2)
-}
-```
-
-`home.ae` 中调用：
-
-```ae
-VStack(spacing=16) {
-    Text("磁盘分区" size=20 weight="bold")
-    GapDivider(gap=12)
-    For(data=viewModel.partitions) {
-        PartitionCard(name="{p.name}" size="{p.size}" type="{p.type}" used="{p.used_percent}")
-    }
-    HStack(spacing=12) {
-        ActionButton(icon="plus" label="新建分区" onClick={Home.on_create()})
-        ActionButton(icon="trash" label="删除" onClick={Home.on_delete()} color="$colors.error")
-    }
-}
-.pad(20)
-```
 
 ### AetherStudio 项目
 
@@ -331,47 +267,62 @@ src/ui/
 ├── routes.ae
 ├── drawers.ae
 ├── home.ae
+├── welcome.ae
 ├── components/
-│   ├── project_navigator.ae  → ProjectNavigator
-│   └── nav_section.ae        → NavSection
+│   ├── project_navigator.ae          → ProjectNavigator
+│   ├── nav_section.ae                → NavSection
+│   └── new_project.ae                → NewProjectModalContent
 └── menu_drawer.ae
 ```
 
-`project_navigator.ae` — 无名组件，文件名即组件名：
+`nav_section.ae` — 带类型注解参数的导航区段：
 
 ```ae
-component() {
-    VStack(spacing=0) {
-        Text("PROJECT" size=11 color="$colors.text_hint" weight="semibold")
-            .pad(left=16 top=8 bottom=4)
-        FileTree(root="/src" onSelect={Home.on_file_select()} filter="*.swift")
-    }
-    .bg("$colors.surface")
+component(icon: String, title: String, subtitle: String)
+
+HStack() {
+    Icon(name=#icon size=12 color=$colors.text_secondary)
+    Text(#title).size(11).bold().color($colors.text_secondary)
+    Text(#subtitle).size(11).color($colors.text_secondary)
+    Spacer()
 }
+.h(24)
+.pad(left=8)
+.border(bottom=0.5 $colors.divider)
 ```
 
-`nav_section.ae` — 带参数的导航区段：
-
-```ae
-component(title, icon="folder") {
-    VStack(spacing=4) {
-        HStack(spacing=6) {
-            Icon(name={icon} size=14 color="$colors.text_secondary")
-            Text({title} size=12 color="$colors.text_secondary" weight="semibold")
-        }
-        .pad(left=16 top=8 bottom=2)
-    }
-}
-```
-
-`home.ae` 中调用：
+`welcome.ae` 中调用：
 
 ```ae
 VStack(spacing=0) {
-    ProjectNavigator()
-    NavSection(title="收藏" icon="star")
-    NavSection(title="最近" icon="clock")
+    :project_navigator()
+    :nav_section(icon="star" title="收藏")
+    :nav_section(icon="clock" title="最近")
 }
 .w(260)
-.bg("$colors.sidebar")
+.bg($colors.sidebar)
 ```
+
+### 带布尔和 Action 参数的组件
+
+```ae
+// src/ui/components/new_project_modal_content.ae
+component NewProjectModalContent()
+
+VStack(spacing=20 alignX=center) {
+    Text("New Project").size(22).bold().color($colors.text)
+    // ... template selection, inputs, buttons
+}
+.w(360).pad(left=24 right=24 top=24 bottom=24).bg($colors.surface).radius(16)
+```
+
+在父页面中使用 Modal 包裹：
+
+```ae
+// welcome.ae
+Modal(visible={Welcome.show_new_project_form} position=center dismissible=true onClose={Welcome.cancel_new_project()}) {
+    :new_project()
+}
+```
+
+Modal wrapper 保留在页面级，确保全屏覆盖；内容提取为组件，方便扩展。
