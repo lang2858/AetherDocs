@@ -269,6 +269,48 @@ TextEditor(value={Notes.content} placeholder="输入笔记")
 
 ---
 
+## PathField
+
+路径选择输入组件，类似 HTML `<input type="file">`。由只读路径文本框和浏览按钮组成，点击浏览按钮弹出系统目录/文件选择器，选中路径自动回写到绑定的状态字段。
+
+### 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | str | 必填 | 路径值的状态绑定（双向） |
+| placeholder | str | "选择路径..." | 未选择路径时的占位文本 |
+| label | str | — | 标签文本 |
+| pickerMode | enum | directory | 选择器模式：`directory` / `file` |
+| onChange | callback | — | 路径变化时触发 |
+
+### 示例
+
+**基本用法（选择目录）：**
+
+```ae
+PathField(value={Welcome.new_project_dir} placeholder="选择保存位置...")
+```
+
+```swift
+HStack {
+    Text(welcomeManager.newProjectDir.isEmpty ? "选择保存位置..." : welcomeManager.newProjectDir)
+        .foregroundColor(welcomeManager.newProjectDir.isEmpty ? .secondary : .primary)
+        .lineLimit(1).truncationMode(.middle)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    Button(action: { FilePickerManager.showDirectoryPicker { path in
+        if let p = path { welcomeManager.setNewProjectDir(p) }
+    }}) { Image(systemName: "folder").foregroundColor(.secondary) }.buttonStyle(.plain)
+}.padding(8).background(Color.gray.opacity(0.1)).cornerRadius(8)
+```
+
+**选择文件：**
+
+```ae
+PathField(value={Settings.config_path} pickerMode="file" label="配置文件")
+```
+
+---
+
 ## Toggle
 
 开关切换组件。
