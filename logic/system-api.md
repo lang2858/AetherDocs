@@ -79,6 +79,65 @@ sys_dialog_hide()
 |---|---|---|
 | `sys_set_language` | `(locale: String)` | 设置语言（如 `"zh-CN"`、`"en"`） |
 | `sys_get_language` | `() -> String` | 获取当前语言 |
+| `sys_tr` | `(key: String) -> String` | 获取翻译文本 |
+| `sys_tr_with_args` | `(key: String, args: HashMap<String, String>) -> String` | 获取翻译文本（带插值参数） |
+
+### sys_tr — 无参数翻译
+
+```rust
+let title = crate::sys_tr("home.title");
+// → "你好" 或 "Hello"，取决于当前语言
+```
+
+### sys_tr_with_args — 带插值翻译
+
+```rust
+let msg = crate::sys_tr_with_args("home.counter", {
+    let mut args = std::collections::HashMap::new();
+    args.insert("count", self.count.to_string());
+    args
+});
+// → "计数: 5" 或 "Count: 5"
+```
+
+### 实际使用示例
+
+```rust
+pub fn on_click(&mut self) {
+    self.count += 1;
+    let msg = crate::sys_tr_with_args("home.counter", {
+        let mut args = std::collections::HashMap::new();
+        args.insert("count", self.count.to_string());
+        args
+    });
+    crate::sys_toast(msg, "info".to_string(), 2.0, "bottom".to_string());
+}
+
+pub fn on_delete_click(&mut self) {
+    crate::sys_dialog_show(
+        crate::sys_tr("home.confirm_delete"),
+        crate::sys_tr("home.cannot_undo"),
+        "confirm".to_string(),
+        crate::sys_tr("home.confirm_delete"),
+        crate::sys_tr("home.delete"),
+    );
+}
+```
+
+### 工作原理
+
+`sys_tr` / `sys_tr_with_args` 走 **delegate 模式**，与其他系统 API 一致：
+
+```
+Rust sys_tr_with_args("home.counter", args)
+  → I18nTrDelegate.tr_with_args(key, args)
+    → I18nManager.shared.tr("home.counter", args: ["count": "5"])
+      → 查找模板字符串 "计数: {count}"
+      → {count} → "5" 替换
+      → 返回 "计数: 5"
+```
+
+Rust 端不知道当前语言，也无法自己做格式化（语言数据在平台层），所以委托给 Swift 的 I18nManager 执行查找 + 插值替换。
 
 ## 存储（Storage）
 
@@ -273,36 +332,26 @@ sys_dialog_hide()
 | `sys_video_current_frame` | `() -> String` | 获取当前帧（图片路径） |
 | `sys_video_is_playing` | `() -> bool` | 是否正在播放 |
 
-## GPU 滤镜（GPU Filters）
+## GPU 滤镜
 
-### 图片滤镜
+> GPU 滤镜完整文档已移至 [gpu-filters.md](gpu-filters.md)，包含滤镜类型、参数格式、链式滤镜和性能说明。
+
+简要 API 参考：
 
 | 函数 | 签名 | 说明 |
 |---|---|---|
 | `sys_image_apply_filter` | `(path: String, filter: String, intensity: f64) -> String` | 对图片应用滤镜 |
 | `sys_image_filters` | `(path: String, filters: String) -> String` | 应用多个滤镜 |
 | `sys_image_color_matrix` | `(path: String, matrix: String) -> String` | 应用色彩矩阵 |
-
-### 视频滤镜
-
-| 函数 | 签名 | 说明 |
-|---|---|---|
 | `sys_video_set_filter` | `(filter: String, intensity: f64)` | 设置视频滤镜 |
 | `sys_video_filters` | `(filters: String)` | 设置多个视频滤镜 |
 | `sys_video_remove_filter` | `(filter: String)` | 移除指定滤镜 |
 | `sys_video_clear_filters` | `()` | 清除所有滤镜 |
-
-### 自定义滤镜
-
-| 函数 | 签名 | 说明 |
-|---|---|---|
 | `sys_filter_register_custom` | `(name: String, kernel: String)` | 注册自定义滤镜 |
 | `sys_filter_apply_custom` | `(name: String, params: String)` | 应用自定义滤镜 |
 | `sys_filter_get_builtin_list` | `() -> String` | 获取内置滤镜列表 |
 
-### 内置滤镜（15 种）
-
-`brightness`、`contrast`、`saturation`、`blur`、`sharpen`、`warmth`、`tint`、`vignette`、`grayscale`、`sepia`、`invert`、`hue`、`exposure`、`highlights`、`shadows`
+内置滤镜（15 种）：`brightness`、`contrast`、`saturation`、`blur`、`sharpen`、`warmth`、`tint`、`vignette`、`grayscale`、`sepia`、`invert`、`hue`、`exposure`、`highlights`、`shadows`
 
 ## 画布（Canvas）
 
