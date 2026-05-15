@@ -13,6 +13,7 @@ export default defineConfig({
       { text: '自定义组件', link: '/components/custom-components' },
       { text: 'Logic 层', link: '/logic/overview' },
       { text: '主题 & i18n', link: '/theming/theme' },
+      { text: '更新记录', link: '/changelog' },
     ],
     sidebar: {
       '/guide/': [
