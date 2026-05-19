@@ -26,6 +26,19 @@ AE 输入组件用于接收用户交互和数据输入。所有输入组件均�
 | selected | bool | 选中状态绑定，如 `selected={Home.is_active()}` |
 | selectedStyle | enum | 选中样式：`highlight`（背景高亮）/ `outline`（描边）/ `invert`（反色） |
 | pressedStyle | enum | 按压样式：`scale`（缩放）/ `opacity`（透明度）/ `fade`（渐变）/ `none`（无效果） |
+
+#### pressedStyle 与 hover 行为
+
+`pressedStyle` 同时影响按压和 hover 交互行为：
+
+| pressedStyle 值 | 按压效果 | hover 效果 | 说明 |
+|---|---|---|---|
+| `scale` | 缩放至 0.95 | 显示 `AppColors.hover_bg` 背景叠加 | 默认值，最常用 |
+| `opacity` | 降低透明度 | 显示 `AppColors.hover_bg` 背景叠加 | 适合文字按钮 |
+| `fade` | 渐变淡出 | 显示 `AppColors.hover_bg` 背景叠加 | 适合次要操作 |
+| `none` | 无效果 | 无效果 | 完全禁用交互反馈 |
+
+> **注意**：hover 背景依赖主题 `[colors]` 中的 `hover_bg` 令牌。如果 `hover_bg` 未定义，所有 hover 效果静默失效。
 | iconSize | num | 图标大小 |
 | iconSpacing | num | 图标与文字间距，默认 4 |
 
@@ -107,6 +120,18 @@ Button(action: { viewModel.submit() }) {
 |------|------|--------|------|
 | icon | str | 必填 | 图标名称 |
 | disabled | bool | false | 是否禁用 |
+
+### 特殊属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| pressedStyle | enum | scale | 按压样式：`scale` / `opacity` / `fade` / `none`，行为与 Button 相同 |
+| size | num | — | 按钮尺寸 |
+| iconSize | num | — | 图标大小 |
+| color | str | — | 图标颜色 |
+| fg | str | — | 前景色 |
+
+IconButton 的 hover 效果通过 `HoverOverlayModifier` 实现，在所有修饰符（`.background()`、`.frame()` 等）之后叠加 `AppColors.hover_bg`。如果主题缺少 `hover_bg` 令牌，hover 效果静默失效。
 
 ### 事件
 

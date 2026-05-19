@@ -33,6 +33,22 @@ Aether 的主题系统通过 `theme.toml` 集中定义设计令牌（Design Toke
 | `error` | 错误色 |
 | `success` | 成功色 |
 | `accent_blue` | 蓝色强调色 |
+| `hover_bg` | **必需** — 按钮/图标按钮 hover 背景色 |
+
+### `hover_bg` 令牌
+
+`hover_bg` 是**必需的颜色令牌**，Button 和 IconButton 的 hover 效果依赖 `AppColors.hover_bg`。
+
+- 必须在 `[colors]` 节中定义，**不是** `[styles.Button]` 的属性
+- 如果缺少 `hover_bg`，按钮 hover 效果会**静默失效**（不会报错，但 hover 时无背景色变化）
+- 建议值：light 主题使用略深的背景色（如 `"#F1F5F9"`），dark 主题使用略浅的背景色（如 `"#262C36"`）
+
+```toml
+[colors]
+# ... 其他颜色
+hover_bg = "#F1F5F9"   # light 主题
+hover_bg = "#262C36"   # dark 主题
+```
 
 ## theme.toml 结构
 
@@ -45,6 +61,7 @@ surface = "#1E293B"
 toolbar_bg = "#161B22"
 sidebar_bg = "#0D1117"
 card_bg = "#1E293B"
+hover_bg = "#262C36"       # 必需 — Button/IconButton hover 效果依赖此令牌
 text = "#C9D1D9"
 text_secondary = "#8B949E"
 text_hint = "#6E7681"
