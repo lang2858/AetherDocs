@@ -13,6 +13,7 @@ export default defineConfig({
       { text: '自定义组件', link: '/components/custom-components' },
       { text: 'Logic 层', link: '/logic/overview' },
       { text: '主题 & i18n', link: '/theming/theme' },
+      { text: '测试', link: '/guide/testing' },
       { text: '更新记录', link: '/changelog' },
     ],
     sidebar: {
@@ -21,6 +22,7 @@ export default defineConfig({
         { text: '项目结构', link: '/guide/project-structure' },
         { text: '构建流水线', link: '/guide/build-pipeline' },
         { text: '配置参考', link: '/guide/config' },
+        { text: '测试框架', link: '/guide/testing' },
       ],
       '/ae/': [
         { text: '响应式布局', link: '/ae/responsive' },
