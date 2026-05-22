@@ -14,7 +14,7 @@ export default defineConfig({
       { text: 'Logic 层', link: '/logic/overview' },
       { text: '主题 & i18n', link: '/theming/theme' },
       { text: '测试', link: '/guide/testing' },
-      { text: '更新记录', link: '/changelog' },
+      { text: '版本与更新', link: '/milestone' },
     ],
     sidebar: {
       '/guide/': [
@@ -55,6 +55,14 @@ export default defineConfig({
         { text: '主题系统', link: '/theming/theme' },
         { text: '国际化', link: '/theming/i18n' },
         { text: '资源管理', link: '/assets/assets' },
+      ],
+      '/milestone': [
+        { text: '版本里程碑', link: '/milestone' },
+        { text: '开发日志', link: '/devlog' },
+      ],
+      '/devlog': [
+        { text: '版本里程碑', link: '/milestone' },
+        { text: '开发日志', link: '/devlog' },
       ],
     },
     search: {
