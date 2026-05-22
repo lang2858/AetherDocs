@@ -22,7 +22,7 @@ Rust 测试脚本  ◀──JSON────  操作结果 / 渲染树快照
 
 ## 快速开始
 
-### 1. 启动开发服务器（测试模式）
+### 1. 启动开发服务器
 
 ```bash
 aether dev start
@@ -32,19 +32,32 @@ aether dev start
 - 在 HTML 页面中注入 `data-ae-type`、`data-ae-name`、`data-ae-uid` 属性
 - 加载 `test-agent.js` 并开放 WebSocket 端口
 
-### 2. 添加测试依赖
+启动后服务器会输出端口信息，例如：
 
-在你的项目 `Cargo.toml` 中：
-
-```toml
-[dev-dependencies]
-aether-test = { path = "<aether-source>/source/crates/aether-test" }
-tokio = { version = "1", features = ["full"] }
+```
+dev server: http://localhost:3000
+test ws: ws://localhost:3001/aether-test
 ```
 
-### 3. 编写第一个测试
+也可以指定端口：
+
+```bash
+# 自定义 HTTP 端口和 WebSocket 测试端口
+aether dev start --port 8080 --test-port 3001
+```
+
+### 2. 创建测试文件
+
+在项目 `src/tests/` 目录下创建 `.rs` 测试文件：
+
+```bash
+mkdir -p src/tests
+```
+
+编写测试：
 
 ```rust
+// src/tests/login.rs
 use aether_test::prelude::*;
 
 #[tokio::test]
@@ -70,14 +83,21 @@ async fn test_login_flow() {
 }
 ```
 
-### 4. 运行测试
+::: tip 端口自动注入
+`aether test` 命令会自动生成 `make_config()` 函数，将开发服务器的端口信息注入到 `TestConfig` 中。测试文件中的 `TestConfig::default()` 会被自动替换为 `make_config()`，无需手动配置端口。
+:::
+
+### 3. 运行测试
 
 ```bash
-# 使用 cargo test
-cargo test
+# 通过端口连接已运行的 dev server
+aether test --port 3000
 
-# 或使用 aether test 命令
-aether test --project . --report html,json
+# 指定报告格式
+aether test --port 3000 --report html,json,junit
+
+# 过滤测试文件
+aether test --port 3000 -f login
 ```
 
 ## 定位器
@@ -237,37 +257,39 @@ struct RenderNode {
 }
 ```
 
-## 配置
+## TestConfig 配置
 
-### aether-test.toml
+`TestConfig` 控制测试运行器的行为：
 
-在项目根目录创建 `aether-test.toml`：
-
-```toml
-platform = "web"
-base_url = "http://localhost"
-port = 3000
-test_port = 3001
-timeout_ms = 5000
-output_dir = "test-reports"
-report_formats = ["html", "json", "junit"]
-auto_submit_bug = false
-record_replay = true
+```rust
+pub struct TestConfig {
+    pub project_dir: PathBuf,      // 项目路径
+    pub platform: String,          // 测试平台（目前仅支持 "web"）
+    pub dev_port: u16,             // 开发服务器 HTTP 端口
+    pub test_port: u16,            // WebSocket 测试端口
+    pub timeout_ms: u64,           // 默认等待超时（毫秒）
+    pub output_dir: String,        // 报告输出目录
+    pub report_formats: Vec<String>, // 报告格式
+    pub auto_submit_bug: bool,     // 失败时自动提交 bug 工单
+    pub record_replay: bool,       // 记录操作回放数据
+}
 ```
-
-### 配置项说明
 
 | 字段 | 默认值 | 说明 |
 |------|--------|------|
-| `platform` | `"web"` | 测试平台（目前仅支持 web） |
-| `base_url` | `"http://localhost"` | 开发服务器地址 |
-| `port` | `3000` | 开发服务器端口 |
-| `test_port` | `3001` | 测试 WebSocket 端口 |
+| `project_dir` | `"."` | 项目路径 |
+| `platform` | `"web"` | 测试平台 |
+| `dev_port` | `0` | 开发服务器端口（由 `aether test` 自动注入） |
+| `test_port` | `0` | WebSocket 测试端口（由 `aether test` 自动注入） |
 | `timeout_ms` | `5000` | 默认等待超时（毫秒） |
 | `output_dir` | `"test-reports"` | 报告输出目录 |
 | `report_formats` | `["html", "json"]` | 报告格式 |
 | `auto_submit_bug` | `false` | 失败时自动提交 bug 工单 |
 | `record_replay` | `true` | 记录操作回放数据 |
+
+::: warning 端口配置方式
+`dev_port` 和 `test_port` 不需要手动设置。`aether test` 命令通过 `--port` 参数连接开发服务器，自动获取端口信息并注入到 `TestConfig` 中。测试文件中写 `TestConfig::default()` 即可，CLI 会在运行时自动替换为带有正确端口信息的 `make_config()`。
+:::
 
 ## 报告
 
@@ -293,16 +315,37 @@ record_replay = true
 
 ## 命令行
 
+### aether dev start
+
+```bash
+aether dev start [选项]
+
+选项:
+  -p, --project <PATH>      项目路径 [默认: .]
+  --port <PORT>             HTTP 服务端口 [默认: 0 (动态分配)]
+  --test-port <PORT>        WebSocket 测试端口 [默认: 3001]
+  --no-open                 不自动打开浏览器
+```
+
+### aether test
+
 ```bash
 aether test [选项]
 
 选项:
   -p, --project <PATH>      项目路径 [默认: .]
-  -f, --filter <PATTERN>    测试文件过滤 (glob)
-  --report <FORMATS>        报告格式: html,json,junit [默认: html,json]
-  --no-browser              不启动浏览器
-  --watch                   监视模式
+      --port <PORT>         开发服务器端口（用于连接已运行的 dev server）
+  -f, --filter <PATTERN>    测试文件过滤 (substring match)
+      --report <FORMATS>    报告格式: html,json,junit [默认: html,json]
+      --no-browser          不启动浏览器
+      --watch               监视模式
 ```
+
+::: tip 工作流程
+1. 先启动 dev server：`aether dev start`
+2. 记下输出的端口（如 `http://localhost:3000`）
+3. 用相同端口运行测试：`aether test --port 3000`
+:::
 
 ## data-ae-* 属性
 
@@ -321,6 +364,7 @@ aether test [选项]
 ## 完整示例
 
 ```rust
+// src/tests/todo.rs
 use aether_test::prelude::*;
 use aether_test::locator::*;
 
@@ -351,4 +395,11 @@ async fn test_todo_app() {
     runner.click(Button("delete_0")).await.unwrap();
     runner.assert_count("ListItem", 0).await.unwrap();
 }
+```
+
+运行：
+
+```bash
+aether dev start --port 3000
+aether test --port 3000 -f todo
 ```
