@@ -4,6 +4,53 @@
 
 ---
 
+## 2026-05-22 — v0.11.0
+
+### 新增：测试框架 aether-test
+
+- 新增 `aether-test` crate，提供自动化 UI 测试能力
+- `aether dev` 支持 `--test-port` 参数，注入 test-agent.js
+- CLI 新增 `aether test` 子命令
+- agent_client: WebSocket 客户端连接测试代理
+- runner: 测试用例执行引擎
+
+### Web 平台组件增强
+
+- **Text**: 状态绑定 `{Type.field}` → `data-bind` 属性，runtime.js 自动刷新
+- **Card**: 支持 bg/radius/shadow/padding/border 属性，主题 token 解析
+- **Section**: 支持 title/bg/padding/radius 属性
+- **List/ListItem**: spacing → gap，ListItem 带主题边框
+- **HStack**: wrap → flex-wrap，justify/alignment → justify-content，verticalAlignment → align-items
+- **VStack**: justify/alignment → justify-content，horizontalAlignment → align-items
+- **TextField**: variant (filled/outlined)、secure、disabled、label、value 状态绑定、主题 token
+- **TextArea**: value/disabled/autoGrow、主题 token
+- **Toggle/Checkbox**: checked/disabled、主题 accent-color
+- **Select**: disabled、主题 token
+- **CollapseItem**: expanded → `<details open>`，spacing 支持
+- **Button**: secondary/ghost variant，主题 token 解析
+
+### Web 平台核心改进
+
+- `styles_to_css` 传入 theme/i18n，彻底消除 CSS 输出中未解析的 `$colors.xxx` token
+- `modifier.rs` 合并主题默认样式 (`theme.styles[component_type]`)
+- 条件修饰符 `when=` 生成 `data-cond` 属性
+- `gen_context` 新增 `component_type` 字段
+- `control.rs` If/ElseIf/Show 条件解析 `resolve_condition_binding`
+- `dispatcher.rs` generate_theme_css 输出 spacing/radius/typography/fonts CSS 变量
+
+### Runtime.js 增强
+
+- `evaluateCondition()` 支持取反、方法调用、等值/不等值比较
+- `data-cond` 条件样式切换
+- `data-show` 显隐控制
+- `data-bind` 状态绑定自动刷新
+
+### Web 平台架构
+
+- 新增 `web_lifecycle.rs`，Web 专属生命周期模块
+- `WebBackend` 支持 `WasmMode` (wasm/server)
+- `wasm_gen` 修正 WASM 导出和模块名映射
+
 ## 2026-05-15
 
 - 增量编译 manifest 系统 — 文件级追踪替代全量哈希
