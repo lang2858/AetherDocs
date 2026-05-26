@@ -4,6 +4,24 @@
 
 ---
 
+## 2026-05-26 — v0.12.0
+
+### Windows 平台 PyQt6 代码生成后端
+
+- 实现 40+ 组件生成器 (display/input/container/layout_utils/misc/control)
+- collect_ae_styles + merge_and_apply_styles + QSS 混合样式方案
+- 状态绑定解析 (resolution.rs) + 事件处理 (modifier_handler.rs)
+- Python runtime 16 个 manager 文件，include_dir! 嵌入编译
+- navigation/system_ui/storage/clipboard 等 runtime manager
+- gen_context style snapshot/restore + container layout_name borrow 修复
+
+### Windows 构建与打包
+
+- PyInstaller exe 打包 + DLL 依赖修复 + 模块导入修复
+- install.sh 路径分隔符兼容
+- 清理编译 warning + 修复编译错误
+- preview-gallery 可生成完整 gen/windows/ 并成功启动
+
 ## 2026-05-22 — v0.11.0
 
 ### 新增：测试框架 aether-test

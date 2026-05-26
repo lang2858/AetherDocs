@@ -165,3 +165,20 @@ Aether 版本演进与功能里程碑，按版本号组织。
   - 新增 web_lifecycle.rs — Web 专属生命周期模块
   - WebBackend WasmMode (wasm/server)
   - 自定义字体加载和 $fonts 主题令牌解析
+
+---
+
+## v0.12.0 — Windows 平台上线 (2026-05-26)
+
+- Windows 平台 PyQt6 代码生成后端完整功能
+  - 40+ 组件生成器 (display/input/container/layout_utils/misc/control)
+  - collect_ae_styles + merge_and_apply_styles + QSS 混合样式方案
+  - 状态绑定解析 (resolution.rs) + 事件处理 (modifier_handler.rs)
+  - Python runtime 16 个 manager 文件，include_dir! 嵌入编译
+  - navigation/system_ui/storage/clipboard 等 runtime manager
+- Windows 构建与打包
+  - PyInstaller exe 打包 + DLL 依赖修复
+  - install.sh 路径分隔符兼容
+  - gen_context style snapshot/restore + container layout_name borrow 修复
+- preview-gallery 可生成完整 gen/windows/ 并成功启动
+- 多项编译 warning 清理与修复

@@ -33,7 +33,7 @@ features:
   - title: Android 平台
     details: Jetpack Compose 原生，代码生成后端已就绪
   - title: Windows & Linux
-    details: WinUI 3 代码生成后端已就绪
+    details: PyQt6 / WinUI 3 代码生成后端，Windows 已可用于生产
   - title: Web 平台
     details: WASM + HTML 代码生成，已可用于生产
   - title: HarmonyOS
