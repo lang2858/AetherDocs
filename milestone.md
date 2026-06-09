@@ -168,6 +168,55 @@ Aether 版本演进与功能里程碑，按版本号组织。
 
 ---
 
+## v0.14.0 — 微信小程序 + 跨平台组件补全 (2026-06-09)
+
+- 微信小程序平台后端 — WXML/WXSS/JS 代码生成
+  - Skyline 渲染引擎 + Rust Wasm 桥接
+  - 页面级文件生成 (WXML/WXSS/JS/JSON) + app.json 全局配置
+  - 状态管理器 runtime (state-manager.js) + Wasm 桥接 (wasm-bridge.js)
+  - i18n/主题解析适配 + 样式/运行时/状态管理器修复
+  - Canvas/PathField 组件实现 + 修饰符增强
+- 跨平台组件补全
+  - 13 个组件跨平台 codegen (Dialog/Snackbar/Toast/ActionSheet/SelectOption/DatePicker/Calendar/Form/FormItem/Carousel/CarouselItem/BottomSheet/Swipeable/TabItem)
+  - 深化已有组件的状态绑定、事件处理与可见性绑定
+  - WebView 组件实现 (Web + 微信平台)
+  - Android + Windows 平台 Canvas/WebView TODO 占位符修复
+- 文档全面更新
+  - README、dev-docs、项目文档、SKILL.md 同步至最新项目信息
+  - 修正平台技术栈 (Windows=PyQt6 非 WinUI)、补充微信平台、补全 80+ 组件清单
+
+---
+
+## v0.13.0 — Android + HarmonyOS + iOS 平台 (2026-06-08)
+
+- Android 平台 Kotlin/Compose 代码生成后端
+  - 完整组件代码生成 + 状态绑定解析 + 主题体系
+  - 运行时管理器生成 (系统UI/导航/i18n/存储/剪贴板等 16+ 管理器)
+  - ViewModel 生成 + Component 参数传递 + Drawer/Sheet/Popover 组件
+  - If/ElseIf/Else 控制流 + 子节点感知生成
+  - WebView 组件实现
+  - Canvas/PathField 组件实现
+  - 输入组件支持状态绑定
+- HarmonyOS 平台 ArkUI 代码生成后端
+  - Linux + HarmonyOS 后端核心实现
+  - 修饰符系统 + 事件处理器实现
+  - 全面补齐组件 + Runtime/Theme/Navigation/SystemUI
+  - 7 个运行时管理器
+  - 新增 resolution.rs 统一状态绑定解析
+- 跨平台重构
+  - 提取跨平台公共 resolution 逻辑 + NavigationStack 实现
+  - For/Show 组件使用 gen_children 支持 If/Else 控制流
+  - 多平台组件补全、编译警告清理、错误消息国际化
+- iOS 平台构建支持
+  - 交叉编译 + runtime `#if os(iOS)` 条件编译守卫
+  - iOS 编译兼容 + StateManager 布尔属性命名修复
+- 其他修复
+  - Windows 状态变更后信号驱动 UI 刷新
+  - codegen 快照指纹检测内部状态变化
+  - i18n 错误消息统一为英文
+
+---
+
 ## v0.12.0 — Windows 平台上线 (2026-05-26)
 
 - Windows 平台 PyQt6 代码生成后端完整功能

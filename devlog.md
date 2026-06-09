@@ -4,6 +4,77 @@
 
 ---
 
+## 2026-06-09 — v0.14.0
+
+### 微信小程序平台后端
+
+- 新增 `wechat_platform/` — WXML/WXSS/JS 代码生成后端
+- Skyline 渲染引擎支持 + Rust Wasm 桥接
+- 页面级 WXML/WXSS/JS/JSON 生成 + app.json 全局配置
+- 状态管理器 runtime (state-manager.js) + Wasm 桥接 (wasm-bridge.js)
+- 样式位置修复 + 运行时提取修复 + 状态管理器命名修正
+- i18n/主题解析适配微信平台
+- Canvas/PathField 组件实现 + 修饰符增强
+
+### 跨平台组件补全
+
+- 13 个组件跨平台 codegen (Dialog/Snackbar/Toast/ActionSheet/SelectOption/DatePicker/Calendar/Form/FormItem/Carousel/CarouselItem/BottomSheet/Swipeable/TabItem)
+- 深化已有组件的状态绑定、事件处理与可见性绑定
+- WebView 组件实现 (Web + 微信平台)
+- Canvas/WebView 组件修复 (Android + Windows 平台 TODO 占位符修复)
+
+### 其他修复
+
+- lint E015 类型校验修复 + E025 测试用例更新
+- CalendarGen 未使用变量警告修复
+
+### 文档全面更新
+
+- README、dev-docs、项目文档、SKILL.md 同步至最新项目信息
+- 修正平台技术栈 (Windows=PyQt6 非 WinUI)、补充微信平台、补全 80+ 组件清单
+- VitePress 侧边栏补充缺失页面
+
+## 2026-06-08 — v0.13.0
+
+### Android 平台 Kotlin/Compose 代码生成后端
+
+- 完整组件代码生成 + 状态绑定解析 + 主题体系
+- 运行时管理器生成 (系统UI/导航/i18n/存储/剪贴板等)
+- 新增 8 个运行时管理器，对齐 Swift 运行时能力
+- ViewModel 生成 + Component 参数传递 + Drawer/Sheet/Popover 组件
+- PinInput 语法修复 + TabView/NavLink/ToolbarItem 组件实现
+- If/ElseIf/Else 控制流 + 子节点感知生成
+- WebView 组件实现
+- Canvas/PathField 组件实现
+- 输入组件支持状态绑定
+
+### HarmonyOS 平台 ArkUI 代码生成后端
+
+- Linux + HarmonyOS 后端核心实现
+- 修饰符系统 + 事件处理器实现
+- 全面补齐组件 + Runtime/Theme/Navigation/SystemUI
+- 7 个运行时管理器
+- 新增 resolution.rs 统一状态绑定解析
+- ViewModel 生成 + Component 参数传递
+
+### 跨平台重构
+
+- 提取跨平台公共 resolution 逻辑 + NavigationStack 实现
+- For/Show 组件使用 gen_children 支持 If/Else 控制流
+- 多平台组件补全、编译警告清理、错误消息国际化
+
+### iOS 平台支持
+
+- iOS 平台构建支持 — 交叉编译 + runtime `#if os(iOS)` 条件编译守卫
+- iOS 编译兼容 + StateManager 布尔属性命名修复
+
+### 其他修复
+
+- Windows 平台状态变更后 UI 刷新——信号驱动重建条件内容
+- codegen 快照指纹检测内部状态变化
+- placeholder 组件渲染子内容而非丢弃
+- i18n 错误消息统一为英文
+
 ## 2026-05-26 — v0.12.0
 
 ### Windows 平台 PyQt6 代码生成后端
