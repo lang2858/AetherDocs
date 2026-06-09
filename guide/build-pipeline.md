@@ -156,7 +156,10 @@ Category A 的 stub 函数始终生成（Rust 侧），Category C 的实现放�
 |------|------|------|------|
 | `SwiftUI` | `aether-codegen::swift_platform` | SwiftUI（macOS / iOS） | **生产可用** |
 | `Web` | `aether-codegen::web_platform` | HTML + WASM | **生产可用** |
+| `Windows` | `aether-codegen::windows_platform` | Python / PyQt6 | **生产可用** |
+| `微信小程序` | `aether-codegen::wechat_platform` | WXML/WXSS/JS + Skyline | **生产可用** |
 | `Android` | `aether-codegen::android_platform` | Kotlin / Jetpack Compose | 代码就绪，接入中 |
-| `Windows` | `aether-codegen::windows_platform` | C# / WinUI 3 | 代码就绪，接入中 |
+| `Linux` | `aether-codegen::linux_platform` | Python / PyQt6 | 代码就绪，接入中 |
+| `HarmonyOS` | `aether-codegen::harmony_platform` | ArkUI | 开发中 |
 
-这些后端逐步接入后，`aether build --platform android` 和 `aether build --platform windows` 将直接可用。
+这些后端逐步接入后，`aether build --platform android`、`aether build --platform linux` 和 `aether build --platform harmony` 将直接可用。

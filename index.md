@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Aether
   text: 声明式跨平台原生应用框架
-  tagline: 用 AE 描述 UI，Rust 实现逻辑，编译器生成 SwiftUI / Compose / WinUI / WASM 原生代码
+  tagline: 用 AE 描述 UI，Rust 实现逻辑，编译器生成 SwiftUI / Compose / PyQt6 / WASM / 微信小程序 原生代码
   image:
     src: /logo.svg
     alt: Aether
@@ -17,13 +17,13 @@ hero:
       link: /ae/syntax
     - theme: alt
       text: GitHub
-      link: https://github.com/aether-dev/aether
+      link: https://github.com/lang2858/Aether
 
 features:
   - title: 声明式 UI
     details: AE 标记语言描述界面 — 组件化、可复用、主题令牌化设计，写一次到处跑
   - title: 原生性能
-    details: 静态转译为平台原生代码（SwiftUI / Jetpack Compose / WinUI / WASM），零运行时开销
+    details: 静态转译为平台原生代码（SwiftUI / Jetpack Compose / PyQt6 / WASM / 微信小程序），零运行时开销
   - title: Rust 逻辑层
     details: 业务逻辑用 Rust 编写，UniFFI 自动生成跨语言绑定，类型安全、内存安全
   - title: 编译器诊断
@@ -33,9 +33,11 @@ features:
   - title: Android 平台
     details: Jetpack Compose 原生，代码生成后端已就绪
   - title: Windows & Linux
-    details: PyQt6 / WinUI 3 代码生成后端，Windows 已可用于生产
+    details: PyQt6 代码生成后端，Windows 已可用于生产
   - title: Web 平台
     details: WASM + HTML 代码生成，已可用于生产
+  - title: 微信小程序
+    details: WXML/WXSS/JS 代码生成后端，小程序开发无缝接入
   - title: HarmonyOS
-    details: ArkUI 代码生成后端（规划中）
+    details: ArkUI 代码生成后端（开发中）
 ---

@@ -6,7 +6,7 @@ Aether 是一个声明式跨平台原生应用开发框架。开发者用 AE 标
 
 - **声明式 UI**: AE 标记语言描述界面，组件化、可复用、主题令牌化
 - **Rust 逻辑层**: 业务逻辑用 Rust 编写，UniFFI 自动生成跨语言绑定
-- **多平台输出**: macOS/iOS (SwiftUI) · Android (Compose) · Windows (WinUI) · Web (WASM)
+- **多平台输出**: macOS/iOS (SwiftUI) · Android (Compose) · Windows/Linux (PyQt6) · Web (WASM) · 微信小程序 · HarmonyOS (ArkUI)
 
 ## 环境要求
 
@@ -156,16 +156,17 @@ open gen/macos/MyappApp.xcodeproj
 | iPhone | `iphone` | iOS 手机应用 |
 | iPad | `ipad` | iOS 平板应用 |
 | Web | `web` | Web 应用 (WASM + HTML) — 生产可用 |
+| Windows | `windows` | Windows 桌面应用 (PyQt6) — 生产可用 |
+| 微信小程序 | `wechat` | 微信小程序应用 |
 
 ### 代码已就绪（接入中）
 
 | 平台 | 参数 | 说明 |
 |------|------|------|
 | Android | `android` | 安卓应用 (Jetpack Compose) |
-| Windows | `windows` | Windows 桌面应用 (WinUI 3) |
-| Linux | `linux` | Linux 桌面应用 |
+| Linux | `linux` | Linux 桌面应用 (PyQt6) |
 
-### 规划中
+### 开发中
 
 | 平台 | 参数 | 说明 |
 |------|------|------|
@@ -203,7 +204,7 @@ aether build [--project <dir>] [--platform <platform>] [--build-dir <dir>] [--re
 | `--release` | Release 构建模式（默认为 debug） |
 | `--force` | 强制全量构建，跳过增量编译缓存 |
 
-可用的 platform 值：`macos`、`iphone`、`ipad`、`web`、`android`、`windows`、`linux`
+可用的 platform 值：`macos`、`iphone`、`ipad`、`web`、`android`、`windows`、`linux`、`wechat`
 
 ### aether trans
 
@@ -219,4 +220,4 @@ aether trans [--project <dir>] [--build-dir <dir>] [--platform <platform>]
 | `--build-dir <dir>` | 构建输出路径，默认为项目下的 `gen` |
 | `--platform <platform>` | 目标平台，默认为当前系统平台 |
 
-可用的 platform 值：`macos`、`iphone`、`ipad`、`web`、`android`、`windows`、`linux`
+可用的 platform 值：`macos`、`iphone`、`ipad`、`web`、`android`、`windows`、`linux`、`wechat`

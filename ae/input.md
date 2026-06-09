@@ -514,6 +514,16 @@ Slider(value: Binding(
 | radius | num | — | 圆角半径 |
 | border | border | — | 边框 |
 
+### SelectOption
+
+Select 的子选项组件，用于更灵活地定义选项（替代 `options`/`labels` 属性列表）。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| value | str | 必填 | 选项值 |
+| label | str | — | 选项显示文本 |
+| disabled | bool | false | 是否禁用 |
+
 ### 事件
 
 | 事件 | 别名 | 说明 |

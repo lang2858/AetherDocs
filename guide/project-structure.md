@@ -153,7 +153,7 @@ VStack(spacing=0) {
 
 ### i18n/ -- 国际化
 
-每个 `.toml` 文件对应一种语言，文件名即为 locale 标识（如 `zh-CN.toml`）。在 `.ae` 文件中通过 `$i18n.key` 引用翻译文本。
+每个 `.toml` 文件对应一种语言，文件名即为 locale 标识（如 `zh-CN.toml`）。在 `.ae` 文件中通过 `@i18n.key` 引用翻译文本。
 
 ### assets/ -- 静态资源
 

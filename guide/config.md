@@ -44,6 +44,9 @@ min_version = "10"
 [platform.linux]
 enabled = false
 
+[platform.wechat]
+enabled = false
+
 [platform.harmony]
 enabled = false
 min_version = "3.0"
@@ -141,6 +144,12 @@ initial_route = "home"
 |------|------|--------|------|
 | `enabled` | bool | `false` | 是否启用 Web 平台构建 |
 
+#### 微信小程序平台
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `enabled` | bool | `false` | 是否启用微信小程序平台构建 |
+
 #### 各平台默认值
 
 | 平台 | enabled 默认值 | min_version 默认值 |
@@ -152,6 +161,7 @@ initial_route = "home"
 | `android_pad` | `false` | `"10"` |
 | `windows` | `false` | `"10"` |
 | `linux` | `false` | `""` |
+| `wechat` | `false` | — |
 | `harmony` | `false` | `"3.0"` |
 | `harmony_pad` | `false` | `"3.0"` |
 | `web` | `false` | — |
@@ -295,6 +305,7 @@ force_exclude = ["Video"]      # 强制排除（即使扫描检测到）
 | `[platform.windows]` | `min_version` | `"10"` |
 | `[platform.linux]` | `enabled` | `false` |
 | `[platform.linux]` | `min_version` | `""` |
+| `[platform.wechat]` | `enabled` | `false` |
 | `[platform.harmony]` | `enabled` | `false` |
 | `[platform.harmony]` | `min_version` | `"3.0"` |
 | `[platform.harmony_pad]` | `enabled` | `false` |
