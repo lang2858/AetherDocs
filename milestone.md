@@ -168,6 +168,36 @@ Aether 版本演进与功能里程碑，按版本号组织。
 
 ---
 
+## v0.15.0 — 动画系统 (2026-06-10 ~ 06-11)
+
+- 动画系统 7 项基础能力
+  - **属性动画** `.animate(duration=, easing=)` — CSS transition 驱动，支持 when= 条件切换时自动过渡
+  - **Transition 过渡** `Transition(show=, type=fade|slide, duration=)` — 元素显隐动画，fade/slide 效果
+  - **关键帧动画** `KeyframeAnimation(name=) { keyframe(...) }` + `.animate(name=)` — CSS @keyframes 驱动
+  - **循环动画** `.animateOn(type=pulse|rotate|shake|bounce|glow, duration=, repeat=)` — 无限循环 CSS animation
+  - **Spring 弹性动画** `.spring(damping=, stiffness=, response=)` — 近似 CSS cubic-bezier
+  - **Layout 动画** `.animateLayout()` — For 循环增删子元素时自动过渡
+  - **手势动画** `GestureDetector(onDrag=)` — 拖拽偏移实时绑定
+- 动画控制 API
+  - **`.onComplete(callback)`** — 动画完成回调，transitionend/animationend 事件驱动
+  - **`.trigger(when=Type.field)`** — 编程式触发 KeyframeAnimation，when 条件 true 时重播
+- Web 平台动画架构
+  - `wireAnimationComplete()` — 持久化监听 transitionend/animationend，debounce 合并多属性事件
+  - `checkAnimationTriggers()` — 检测 data-trigger-when 绑定变化，false→true 时重播 CSS animation
+  - `dispatchCompleteAction()` — 解析 complete: 前缀 action，调用 handleAction 执行 Rust 回调
+  - CSS 级联修复 — 条件样式类 (ae-c*) 在基础类 (ae-*) 之后生成，确保 when= 样式优先级正确
+  - data-action 多动作拆分 — 逗号分隔的 click + complete 动作独立处理
+- Swift 平台动画
+  - onComplete 回调 — DispatchQueue.main.asyncAfter 延迟调用
+  - Spring 弹性动画 — .animation(.spring(), value:) 声明式驱动
+- IR 层扩展
+  - 新增 `AeValue::SpringParams(SpringValue)` 类型
+  - 新增 `AeValue::TriggerParams(TriggerValue)` 类型
+  - 新增 `KeyframeAnimationDef` IR 结构体
+  - `classify_spring_params()` / `classify_trigger_params()` 解析器
+
+---
+
 ## v0.14.0 — 微信小程序 + 跨平台组件补全 (2026-06-09)
 
 - 微信小程序平台后端 — WXML/WXSS/JS 代码生成

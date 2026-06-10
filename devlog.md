@@ -4,6 +4,56 @@
 
 ---
 
+## 2026-06-11 — v0.15.0
+
+### 动画控制 API
+
+- `.onComplete(callback)` 修饰符 — 动画完成时回调 Rust 方法
+  - `spec_ae.rs`: 新增 `onComplete` (ValueType::Callback) 到 MODIFIER_SPECS
+  - `view_builder.rs`: onComplete → `complete:Type.method()` 前缀写入 data-action
+  - `runtime.js`: `wireAnimationComplete()` 监听 transitionend/animationend 事件
+  - `dispatchCompleteAction()` 解析 complete: action → handleAction
+  - Swift: `onComplete` → DispatchQueue.main.asyncAfter 延迟回调
+- `.trigger(when=Type.field)` 修饰符 — 编程式触发关键帧动画
+  - `spec_ae.rs`: 新增 `trigger` (ValueType::TriggerParams) 到 MODIFIER_SPECS
+  - `ir.rs`: 新增 `TriggerValue { when }` + `AeValue::TriggerParams` + `classify_trigger_params()`
+  - `view_builder.rs`: trigger → `data-trigger="name"` + `data-trigger-when="Type.field"` HTML 属性
+  - `runtime.js`: `checkAnimationTriggers()` 检测 when 变化，重播 CSS animation
+  - 初始状态处理 — when=false 时 animation=none 阻止自动播放
+
+### Web 平台动画修复
+
+- CSS 级联顺序修复 — 条件样式类 (ae-c*) 延迟到基础类 (ae-*) 之后生成，确保条件样式优先级正确
+- data-action 多动作拆分 — `Home.toggle_active();complete:Home.on_color_done()` 用 `;` 分隔后独立处理
+- wireAnimationComplete 持久化监听 — 移除 `{ once: true }`，使用 `_aetherCompleteWired` 标志
+- transitionend debounce — `_aetherCompletePending` + requestAnimationFrame 合并多属性事件
+- 移除 runtime.js 中所有动画相关 debug console.log
+
+### 之前完成（2026-06-10）
+
+### Web 平台动画基础能力
+
+- 属性动画 `.animate(duration=, easing=)` — when= 条件修饰符自动生成 CSS transition
+- Transition 过渡 `Transition(show=, type=fade, duration=)` — fade/slide CSS transition
+- 关键帧动画 `KeyframeAnimation(name=) { keyframe(...) }` + `.animate(name=)` — CSS @keyframes
+- 循环动画 `.animateOn(type=pulse|rotate|shake|bounce|glow, duration=, repeat=)` — CSS animation infinite
+- Spring 弹性动画 `.spring(damping=, stiffness=, response=)` — cubic-bezier 近似
+- Layout 动画 `.animateLayout()` — For 循环增删子元素 layoutAnimBeforeRender/AfterRender
+- 手势动画 `GestureDetector(onDrag=)` — 拖拽偏移绑定
+
+### IR 层扩展
+
+- 新增 `SpringValue { damping, stiffness, response }` + `AeValue::SpringParams`
+- 新增 `KeyframeAnimationDef { name, duration, easing, keyframes }` IR 结构体
+- `classify_spring_params()` 解析 spring 参数值
+- KeyframeAnimation 组件解析 — parser 支持 keyframe 子组件
+
+### 其他修复
+
+- Transition fade 修复 — data-show 通用选择器排除 data-transition 元素
+- For 循环 i64→bigint 修复 — typeof data === 'bigint' 时 Number() 转换
+- WASM getter 方法解析修复 — resolveBinding 检查 typeof === 'function' 并调用
+
 ## 2026-06-09 — v0.14.0
 
 ### 微信小程序平台后端
